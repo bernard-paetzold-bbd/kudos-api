@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="kudos")
+@Table(name = "kudos")
 public class Kudo {
 
     @Id
@@ -37,7 +37,7 @@ public class Kudo {
     private Boolean flagged;
 
     @PrePersist
-    protected void onCreate(){
+    protected void onCreate() {
         this.created_at = LocalDateTime.now();
     }
 
