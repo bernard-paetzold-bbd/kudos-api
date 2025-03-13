@@ -1,6 +1,8 @@
 package com.bbdgrads.kudos_api.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,28 +17,42 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping(path = "/user")
 public class UserController {
     @Autowired
     private UserService userService;
 
+    /* TODO: Decide if we want to create a controller advice for this controller and all controllers in general,
+     or if we want to check for each fail case.
+     EXAMPLE: What if we try to create a team with a name that already exists (team names should be unique.) How does
+     the error get thrown? */
+
     // TODO: Need to check the type of the google_id
     @PostMapping("/create")
-    public @ResponseBody String createNewUser(@RequestParam Long userId, @RequestParam String name) {
+    public ResponseEntity<User> createNewUser(@RequestParam Long userId, @RequestParam String name) {
         var newUser = new User(userId, name, false, new Team());
 
-        userService.save(newUser);
+        User confirmedUser = userService.save(newUser);
 
-        return "User saved";
+        return ResponseEntity.status(HttpStatus.CREATED).body(confirmedUser);
     }
 
     @GetMapping("/{user_id_token}")
-    public String getUser(@PathVariable String userIdToken) {
+    public ResponseEntity<User> getUser(@PathVariable String userIdToken) {
         // TODO: Validate the user id token here and map to correct user_id
         // https://developers.google.com/identity/sign-in/web/backend-auth
 
-        return new String();
+        // Dummy example for consistency. Will change when we deal with oauth shenanigans.
+        Optional<User> user = userService.findByUserId(Long.parseLong(userIdToken));
+        if (user.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.OK).body(user.get());
+        }
     }
 
     @DeleteMapping("/{user_id_token}")

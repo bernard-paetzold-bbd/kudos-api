@@ -1,7 +1,9 @@
 package com.bbdgrads.kudos_api.service;
 
 import java.util.List;
+import java.util.Optional;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,18 +16,24 @@ public class KudoServiceImpl implements KudoService {
     @Autowired
     private KudoRepository kudoRepository;
 
+    // Change made here to return saved kudo.
     @Override
-    public void save(Kudo kudo) {
-        kudoRepository.save(kudo);
+    public Kudo save(Kudo kudo) {
+        return kudoRepository.save(kudo);
     }
 
+    // Made change here to use optional and account for when kudo does not exist with ID.
     @Override
     public void delete(long kudoId) {
+        Kudo tempKudo = findByKudoId(kudoId)
+                .orElseThrow(()-> new EntityNotFoundException(String.format("The kudo with kudoId %s does not exist", kudoId)));
+
         kudoRepository.deleteById(kudoId);
     }
 
+    //Change made here
     @Override
-    public Kudo findByKudoId(Long kudoId) {
+    public Optional<Kudo> findByKudoId(Long kudoId) {
         return kudoRepository.findByKudoId(kudoId);
     }
 
@@ -39,6 +47,8 @@ public class KudoServiceImpl implements KudoService {
         return kudoRepository.findBySendingUser(targetUser);
     }
 
+    // These two methods are added with Lombok already unless I am misunderstanding.
+    // Maybe redundant.
     @Override
     public void setFlagged(Kudo kudo, boolean flagged) {
         kudo.setFlagged(flagged);
