@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bbdgrads.kudos_api.model.Kudo;
+import com.bbdgrads.kudos_api.model.User;
 import com.bbdgrads.kudos_api.service.KudoService;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,12 +32,12 @@ public class KudoController {
     }
 
     // Get all kudos directed at requestor
-    @GetMapping("/list")
+    @GetMapping("/my-kudos")
     public List<Kudo> getKudo(@PathVariable String target_id_token) {
         // TODO: Validate the user id token here and map to correct user_id
-        Long target_id = 0L;
+        var user = new User();
 
-        var kudos = kudoService.findByTarget_user_id(target_id);
+        var kudos = kudoService.findByTargetUser(user);
         return kudos;
     }
 
