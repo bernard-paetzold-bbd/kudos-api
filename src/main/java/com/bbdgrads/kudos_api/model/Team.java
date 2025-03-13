@@ -9,14 +9,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "log_events")
-public class LogEvent {
+@Table(name = "teams")
+public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long eventId;
+    private Long teamId;
 
     @Column(nullable = false)
-    private String description;
-
+    private String name;
 }

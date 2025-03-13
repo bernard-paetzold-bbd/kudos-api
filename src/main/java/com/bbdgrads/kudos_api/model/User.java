@@ -14,14 +14,14 @@ public class User {
 
     @Id // indicates the below property is the primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY) // No argument => uses default Id gen of postgres
-    private Long user_id;
-    private String first_name;
-    private String last_name;
+    private Long userId;
+    private String username;
 
     @Column(nullable = false)
-    private boolean is_admin;
+    private boolean isAdmin;
 
-    @Column(unique = true)
-    private String username;
+    @ManyToOne
+    @JoinColumn(name = "team_id", nullable = false)
+    private Team team;
 
 }

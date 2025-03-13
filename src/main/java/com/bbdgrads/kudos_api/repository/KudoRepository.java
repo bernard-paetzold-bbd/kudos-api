@@ -7,5 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface KudoRepository extends JpaRepository<Kudo, Long> {
-    List<Kudo> findByTarget_user_id(User target_user_id);
+    Kudo findByKudoId(Long kudoId);
+
+    List<Kudo> findByTargetUser(User targetUser);
+
+    List<Kudo> findBySendingUser(User sendingUser);
 }

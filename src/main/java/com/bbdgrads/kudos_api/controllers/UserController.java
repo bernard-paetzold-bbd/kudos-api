@@ -6,9 +6,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bbdgrads.kudos_api.model.Team;
 import com.bbdgrads.kudos_api.model.User;
-import com.bbdgrads.kudos_api.repository.UserRepository;
+import com.bbdgrads.kudos_api.service.UserService;
+
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -16,24 +19,32 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping(path = "/user")
 public class UserController {
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     // TODO: Need to check the type of the google_id
     @PostMapping("/create")
-    public @ResponseBody String createNewUser(@RequestParam Long user_id, @RequestParam String name) {
-        var newUser = new User(user_id, name, name, false, name);
+    public @ResponseBody String createNewUser(@RequestParam Long userId, @RequestParam String name) {
+        var newUser = new User(userId, name, false, new Team());
 
-        userRepository.save(newUser);
+        userService.save(newUser);
 
-        return "Saved";
+        return "User saved";
     }
 
     @GetMapping("/{user_id_token}")
-    public String getUser(@PathVariable String user_id_token) {
+    public String getUser(@PathVariable String userIdToken) {
         // TODO: Validate the user id token here and map to correct user_id
         // https://developers.google.com/identity/sign-in/web/backend-auth
 
         return new String();
     }
 
+    @DeleteMapping("/{user_id_token}")
+    public String deleteUser(@PathVariable String userIdToken) {
+        // TODO: Validate the user id token here and map to correct user_id
+
+        userService.delete(0L);
+
+        return "User deleted";
+    }
 }

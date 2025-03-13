@@ -1,12 +1,9 @@
 package com.bbdgrads.kudos_api.model;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,23 +15,25 @@ public class Kudo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long kudo_id;
+    private Long kudoId;
 
     @Column(nullable = false)
     private String message;
 
     @ManyToOne
     @JoinColumn(name = "sending_user_id", nullable = false)
-    private User sending_user_id;
+    private User sendingUser;
 
     @ManyToOne
     @JoinColumn(name = "receiving_user_id", nullable = false)
-    private User target_user_id;
+    private User targetUser;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime created_at;
 
     private Boolean flagged;
+
+    private Boolean read;
 
     @PrePersist
     protected void onCreate() {
