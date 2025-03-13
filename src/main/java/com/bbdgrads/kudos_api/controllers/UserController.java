@@ -1,5 +1,6 @@
 package com.bbdgrads.kudos_api.controllers;
 
+import com.bbdgrads.kudos_api.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ import java.util.Optional;
 @RequestMapping(path = "/user")
 public class UserController {
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     /* TODO: Decide if we want to create a controller advice for this controller and all controllers in general,
      or if we want to check for each fail case.

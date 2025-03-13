@@ -2,6 +2,7 @@ package com.bbdgrads.kudos_api.controllers;
 
 import java.util.List;
 
+import com.bbdgrads.kudos_api.service.KudoServiceImpl;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import com.bbdgrads.kudos_api.service.KudoService;
 @RequestMapping(path = "/kudos")
 public class KudoController {
     @Autowired
-    private KudoService kudoService;
+    private KudoServiceImpl kudoService;
 
     // Why use ResponseEntity instead of @ResponseBody?
     // ResponseEntity more likely to be used in practice. It is more flexible but more verbose.
