@@ -32,7 +32,7 @@ public class KudoController {
     }
 
     // Get all kudos directed at requestor
-    @GetMapping("/my-kudos")
+    @GetMapping("/user-kudos")
     public List<Kudo> getKudo(@PathVariable String target_id_token) {
         // TODO: Validate the user id token here and map to correct user_id
         var user = new User();
