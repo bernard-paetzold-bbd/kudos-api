@@ -18,8 +18,4 @@ public interface KudoService {
     List<Kudo> findByTargetUser(User targetId);
 
     List<Kudo> findBySendingUser(User targetId);
-
-    void setFlagged(Kudo kudo, boolean flagged);
-
-    void setRead(Kudo kudo, boolean read);
 }

@@ -47,16 +47,4 @@ public class KudoServiceImpl implements KudoService {
         return kudoRepository.findBySendingUser(targetUser);
     }
 
-    // These two methods are added with Lombok already unless I am misunderstanding.
-    // Maybe redundant.
-    @Override
-    public void setFlagged(Kudo kudo, boolean flagged) {
-        kudo.setFlagged(flagged);
-    }
-
-    @Override
-    public void setRead(Kudo kudo, boolean read) {
-        kudo.setRead(read);
-    }
-
 }
