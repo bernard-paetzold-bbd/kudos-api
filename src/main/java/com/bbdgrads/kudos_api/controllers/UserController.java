@@ -23,12 +23,12 @@ public class UserController {
 
     // TODO: Need to check the type of the google_id
     @PostMapping("/create")
-    public @ResponseBody String createNewUser(@RequestParam Long userId, @RequestParam String name) {
-        var newUser = new User(userId, name, false, new Team());
+    public @ResponseBody User createUser(@RequestParam String name, @RequestParam String googleToken) {
+        var newUser = new User(name, googleToken, false);
 
         userService.save(newUser);
 
-        return "User saved";
+        return newUser;
     }
 
     @GetMapping("/{user_id_token}")
