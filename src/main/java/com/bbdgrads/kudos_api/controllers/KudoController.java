@@ -60,7 +60,7 @@ public class KudoController {
     public ResponseEntity<?> updateKudoMessage(
             @PathVariable Long kudoId,
             @RequestParam String newMessage,
-            @RequestParam String username) {
+            @RequestParam String username) { // change to google token
 
         Optional<User> user = userService.findByUsername(username);
 
