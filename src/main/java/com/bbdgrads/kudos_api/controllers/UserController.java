@@ -5,6 +5,7 @@ import com.bbdgrads.kudos_api.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,19 +25,19 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<?> createUser(
             @RequestParam String name,
-            @RequestParam String googleToken) {
+            @RequestParam String googleId) {
 
-        Optional<User> existingUserToken = userService.findByUserToken(googleToken);
+        Optional<User> existingUserToken = userService.findByUserGoogleId(googleId);
         Optional<User> existingUserUsername = userService.findByUsername(name);
         if (existingUserToken.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(String.format("A user with the token %s already exists.", googleToken));
+                    .body(String.format("A user with the ID %s already exists.", googleId));
         }
         else if (existingUserUsername.isPresent()){
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(String.format("A user with the username %s already exists.", name));
         }
-        User newUser = new User(name, googleToken, false);
+        User newUser = new User(name, googleId, false);
         User savedUser = userService.save(newUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
@@ -50,6 +51,7 @@ public class UserController {
     }
 
     @PutMapping("/addUserToTeam")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> addUserToTeam(@RequestParam String username, @RequestParam String team_name){
         var userOpt = userService.findByUsername(username);
         var teamOpt = teamService.findByTeamName(team_name);
@@ -64,28 +66,29 @@ public class UserController {
     }
 
     // For when a user wants to delete themselves.
-    @DeleteMapping("/{user_id_token}")
-    public ResponseEntity<String> deleteUser(@PathVariable String userIdToken) {
+    @DeleteMapping("/{user_google_id}")
+    public ResponseEntity<String> deleteUser(@PathVariable String userGoogleId) {
         // TODO: Validate the user id token here and map to correct user_id
 
-        var user = userService.findByUserToken(userIdToken);
+        var user = userService.findByUserGoogleId(userGoogleId);
         if (user.isPresent()){
             userService.delete(user.get().getUserId());
             return ResponseEntity.status(HttpStatus.OK).body(String.format("User %s has been deleted.",user.get().getUsername()));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("User with token %s does not exist.",userIdToken));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("User with google ID %s does not exist.",userGoogleId));
     }
 
     // ADMIN permissions deletion of a user. Can only be performed by admin, admin status checked via token. Will be stored in session?
     @DeleteMapping("/username/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteUserByUsername(
-            @PathVariable String username,
-            @RequestParam String userIdToken) {
-        Optional<User> adminUser = userService.findByUserToken(userIdToken);
-        if (adminUser.isEmpty() || !adminUser.get().isAdmin()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Only admins can delete users.");
-        }
+            @PathVariable String username/*,
+            @RequestParam String userGoogleId*/) {
+//        Optional<User> adminUser = userService.findByUserGoogleId(userGoogleId);
+//        if (adminUser.isEmpty() || !adminUser.get().isAdmin()) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+//                    .body("Only admins can delete users.");
+//        }
         Optional<User> userToDelete = userService.findByUsername(username);
         if (userToDelete.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

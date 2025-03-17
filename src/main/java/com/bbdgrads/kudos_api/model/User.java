@@ -14,7 +14,7 @@ public class User {
 
     public User(String username, String googleToken, boolean isAdmin) {
         this.username = username;
-        this.googleToken = googleToken;
+        this.googleId = googleId;
         this.isAdmin = isAdmin;
     }
 
@@ -27,7 +27,7 @@ public class User {
     private boolean isAdmin;
 
     @Column(nullable = false, unique = true)
-    private String googleToken;
+    private String googleId;
 
     @ManyToOne
     @JoinColumn(name = "team_id", nullable = true)

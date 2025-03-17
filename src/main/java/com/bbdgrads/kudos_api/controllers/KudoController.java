@@ -8,6 +8,7 @@ import com.bbdgrads.kudos_api.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,17 +58,18 @@ public class KudoController {
 
     // Update the message of a kudo. Can be used in the case where message needs to be censored or corrected after the fact.
     @PatchMapping("/{kudoId}/message")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateKudoMessage(
             @PathVariable Long kudoId,
-            @RequestParam String newMessage,
-            @RequestParam String username) { // change to google token
+            @RequestParam String newMessage/*,
+            @RequestParam String username*/) { // change to google token
 
-        Optional<User> user = userService.findByUsername(username);
-
-        if (user.isEmpty() || !user.get().isAdmin()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Only admins can update kudos.");
-        }
+//        Optional<User> user = userService.findByUsername(username);
+//
+//        if (user.isEmpty() || !user.get().isAdmin()) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+//                    .body("Only admins can update kudos.");
+//        }
 
         Optional<Kudo> kudoOpt = kudoService.findByKudoId(kudoId);
 

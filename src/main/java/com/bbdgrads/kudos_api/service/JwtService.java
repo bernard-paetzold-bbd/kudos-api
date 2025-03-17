@@ -42,6 +42,18 @@ public class JwtService {
         }
     }
 
+    // Get the google Id from the JWT
+    public String extractGoogleIdFromJwt(String jwtToken) {
+        try {
+            DecodedJWT decodedJWT = JWT.decode(jwtToken);
+            return decodedJWT.getSubject(); // sub = subject ~= google Id
+        } catch (JWTVerificationException e) {
+            System.err.println("JWT Decoding failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+
     public String generateApiJwt(String userId){
         String KUDOS_ISSUER = "kudos-api";
         long EXPIRATION_TIME = 86400000;
