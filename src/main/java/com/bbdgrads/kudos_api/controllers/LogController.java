@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,12 +25,12 @@ public class LogController {
     private LogService logService;
 
     @PostMapping("/create")
-    public @ResponseBody String createLog(@RequestParam Long user_id, @RequestParam String name) {
+    public ResponseEntity<String> createLog(@RequestParam Long user_id, @RequestParam String name) {
         var log = new Log();
 
         logService.save(log);
 
-        return "Saved";
+        return ResponseEntity.ok("Saved");
     }
 
     // Get all logs relating to a specific user

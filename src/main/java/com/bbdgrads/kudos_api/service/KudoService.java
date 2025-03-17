@@ -1,22 +1,21 @@
 package com.bbdgrads.kudos_api.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.bbdgrads.kudos_api.model.Kudo;
 import com.bbdgrads.kudos_api.model.User;
 
 public interface KudoService {
-    void save(Kudo kudo);
+    // Return Kudo, so the saver can see the ID provided to it.
+    Kudo save(Kudo kudo);
 
     void delete(long id);
 
-    Kudo findByKudoId(Long kudoId);
+    // Changed here
+    Optional<Kudo> findByKudoId(Long kudoId);
 
     List<Kudo> findByTargetUser(User targetId);
 
     List<Kudo> findBySendingUser(User targetId);
-
-    void setFlagged(Kudo kudo, boolean flagged);
-
-    void setRead(Kudo kudo, boolean read);
 }
