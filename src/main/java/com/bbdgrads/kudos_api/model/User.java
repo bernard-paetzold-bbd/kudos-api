@@ -26,7 +26,7 @@ public class User {
     @Column(nullable = false)
     private boolean isAdmin;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String googleToken;
 
     @ManyToOne
