@@ -7,7 +7,6 @@ import com.bbdgrads.kudos_api.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,16 +23,19 @@ public class TeamController {
 
     // Create a new team
     @PostMapping("/create")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createTeam(
-            @RequestParam String name/*,
-            @RequestParam String googleId*/) {
-//        Optional<User> user = userService.findByUserGoogleId(googleId);
-//        if (user.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                    .body("Invalid user token.");
-//        }
-        Optional<Team> existingTeam = teamService.findByTeamName(name);
+            @RequestParam String name,
+            @RequestParam String googleToken) {
+        Optional<User> user = userService.findByUserToken(googleToken);
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid user token.");
+        }
+        if (!user.get().isAdmin()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("You do not have permission to create teams.");
+        }
+        Optional<Team> existingTeam = teamService.findByName(name);
         if (existingTeam.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(String.format("A team with the name '%s' already exists.", name));
@@ -65,24 +67,27 @@ public class TeamController {
 
     // Update a team name, only possible if you're an admin.
     @PutMapping("/{teamId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateTeam(
             @PathVariable Long teamId,
-            @RequestParam String newName/*,
-            @RequestParam String googleId*/) {
+            @RequestParam String newName,
+            @RequestParam String googleToken) {
 
-//        Optional<User> user = userService.findByUserGoogleId(googleId);
-//        if (user.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                    .body("Invalid user token.");
-//        }
+        Optional<User> user = userService.findByUserToken(googleToken);
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid user token.");
+        }
+        if (!user.get().isAdmin()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("You do not have permission to update team names.");
+        }
 
         Optional<Team> teamOpt = teamService.findByTeamId(teamId);
         if (teamOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Team not found.");
         }
-        if (teamService.findByTeamName(newName).isPresent()) {
+        if (teamService.findByName(newName).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("A team with this name already exists.");
         }
@@ -96,16 +101,16 @@ public class TeamController {
 
     // Delete a team
     @DeleteMapping("/{teamId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteTeam(@PathVariable Long teamId/*, @RequestParam String googleId*/) {
-//        if (user.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                    .body("Invalid user token.");
-//        }
-//        if (!user.get().isAdmin()) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-//                    .body("You do not have permission to delete teams.");
-//        }
+    public ResponseEntity<String> deleteTeam(@PathVariable Long teamId, @RequestParam String googleToken) {
+        Optional<User> user = userService.findByUserToken(googleToken);
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid user token.");
+        }
+        if (!user.get().isAdmin()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("You do not have permission to delete teams.");
+        }
         Optional<Team> team = teamService.findByTeamId(teamId);
         if (team.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
