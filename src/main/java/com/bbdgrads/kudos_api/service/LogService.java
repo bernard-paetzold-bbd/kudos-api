@@ -9,7 +9,7 @@ import com.bbdgrads.kudos_api.model.User;
 public interface LogService {
     List<Log> findByActingUser(User actingUser);
 
-    List<Log> findByEvent(LogEvent event);
+    List<Log> findByEventId(int eventId);
 
     List<Log> findByLogId(Long logId);
 

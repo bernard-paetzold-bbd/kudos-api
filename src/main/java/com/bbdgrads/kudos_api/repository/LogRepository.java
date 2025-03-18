@@ -10,7 +10,7 @@ import java.util.List;
 public interface LogRepository extends JpaRepository<Log, Long> {
     List<Log> findByActingUser(User actingUser);
 
-    List<Log> findByEvent(LogEvent event);
+    List<Log> findByEventId(int eventId);
 
     List<Log> findByLogId(Long logId);
 
