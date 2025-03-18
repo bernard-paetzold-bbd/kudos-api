@@ -4,10 +4,12 @@ import com.bbdgrads.kudos_api.model.Team;
 import com.bbdgrads.kudos_api.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class TeamServiceImpl implements TeamService{
 
     @Autowired
@@ -31,7 +33,7 @@ public class TeamServiceImpl implements TeamService{
     }
 
     public Optional<Team> findByTeamName(String team_name) {
-        return teamRepository.findByTeamName(team_name);
+        return teamRepository.findByName(team_name);
     }
 
     public List<Team> findAll() {
