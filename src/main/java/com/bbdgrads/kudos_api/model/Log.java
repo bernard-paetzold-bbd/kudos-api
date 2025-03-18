@@ -1,5 +1,7 @@
 package com.bbdgrads.kudos_api.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +23,7 @@ public class Log {
     private User actingUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "target_user_id", nullable = false)
+    @JoinColumn(name = "target_user_id", nullable = true)
     private User targetUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,6 +31,20 @@ public class Log {
     private Kudo kudo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", nullable = false)
-    private LogEvent event;
+    @JoinColumn(name = "team_id", nullable = true)
+    private User team;
+
+    @Column(nullable = true)
+    private int eventId;
+
+    @Column(nullable = true)
+    private String verboseLog;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime logTime;
+
+    @PrePersist
+    protected void onCreate() {
+        this.logTime = LocalDateTime.now();
+    }
 }

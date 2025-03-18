@@ -11,14 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.bbdgrads.kudos_api.model.Log;
-import com.bbdgrads.kudos_api.model.User;
-import com.bbdgrads.kudos_api.service.KudoService;
 import com.bbdgrads.kudos_api.service.LogService;
 
-@Controller
+@RestController
 @RequestMapping(path = "/logs")
 public class LogController {
     @Autowired
