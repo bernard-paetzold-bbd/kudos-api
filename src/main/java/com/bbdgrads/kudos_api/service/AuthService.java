@@ -21,7 +21,7 @@ public class AuthService {
     private String CLIENT_ID;
     @Value("${google.client.secret}")
     private String CLIENT_SECRET;
-    private final String REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
+    private final String REDIRECT_URI = "http://localhost:8090/auth_code";
 
     private final WebClient webClient;
 
@@ -31,9 +31,8 @@ public class AuthService {
         this.webClient = webClientBuilder.baseUrl(BASE_URL).build();
     }
 
-    private Optional<OAuthAccessTokenResponse> getUserAccessToken(){
+    public Optional<OAuthAccessTokenResponse> getUserAccessToken(String authCode){
         try {
-            String authCode = getAuthCodeFromUser();
             OAuthAccessTokenResponse tokenResponse = webClient.post()
                     .uri("/token")
                     .bodyValue(getRequestBody(authCode))
@@ -87,7 +86,7 @@ public class AuthService {
         return scanner.nextLine();
     }
 
-    private Optional<OAuthUserInfoResponse> getUserGoogleProfile(String accessToken){
+    public Optional<OAuthUserInfoResponse> getUserGoogleProfile(String accessToken){
         WebClient webClient = WebClient.create("https://www.googleapis.com");
         try {
             OAuthUserInfoResponse response = webClient.get()
@@ -106,12 +105,12 @@ public class AuthService {
         }
     }
 
-    public Optional<OAuthUserInfoResponse> runAuthFlow(){
-        Optional<OAuthAccessTokenResponse> accessToken = getUserAccessToken();
-        if(accessToken.isPresent()){
-            return getUserGoogleProfile(accessToken.get().getAccessToken());
-        } else{
-            return Optional.empty();
-        }
-    }
+//    public Optional<OAuthUserInfoResponse> runAuthFlow(){
+//        Optional<OAuthAccessTokenResponse> accessToken = getUserAccessToken();
+//        if(accessToken.isPresent()){
+//            return getUserGoogleProfile(accessToken.get().getAccessToken());
+//        } else{
+//            return Optional.empty();
+//        }
+//    }
 }

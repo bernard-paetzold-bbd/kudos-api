@@ -16,6 +16,14 @@ public class KudosApiApplication {
 	private AuthService authService;
 
 	public static void main(String[] args) {
+		System.out.println("\n\n" +
+				"\t\t\t\t██╗  ██╗ ██╗   ██╗ ██████╗   ██████╗  ███████╗\n" +
+				"\t\t\t\t██║ ██╔╝ ██║   ██║ ██╔══██╗ ██╔═══██╗ ██╔════╝\n" +
+				"\t\t\t\t█████╔╝  ██║   ██║ ██║  ██║ ██║   ██║ ███████╗\n" +
+				"\t\t\t\t██╔═██╗  ██║   ██║ ██║  ██║ ██║   ██║ ╚════██║\n" +
+				"\t\t\t\t██║  ██╗ ╚██████╔╝ ██████╔╝ ╚██████╔╝ ███████║\n" +
+				"\t\t\t\t╚═╝  ╚═╝  ╚═════╝  ╚═════╝   ╚═════╝  ╚══════╝\n\n" +
+				"                                          ");
 		SpringApplication.run(KudosApiApplication.class, args);
 	}
 
