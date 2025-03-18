@@ -21,7 +21,7 @@ public class AuthService {
     private String CLIENT_ID;
     @Value("${google.client.secret}")
     private String CLIENT_SECRET;
-    private final String REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
+    private final String REDIRECT_URI = "http://localhost:8090/auth_code";
 
     private final WebClient webClient;
 

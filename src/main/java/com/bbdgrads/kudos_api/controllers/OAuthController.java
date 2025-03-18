@@ -76,6 +76,7 @@ public class OAuthController extends ProtectedController {
         System.out.println(bearer);
         Optional<String> test = this.verifyApiRequest(jwtService, bearer);
         if (test.isPresent()){
+            System.out.println(test.get());
             return "success";
         } else {
             return "fail";
