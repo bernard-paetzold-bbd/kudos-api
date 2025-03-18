@@ -1,0 +1,32 @@
+name: App Deploy
+ 
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_db_username: ${{ vars.DB_USERNAME }}
+      TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: af-south-1
+      - name: Build and Deploy
+        run: chmod +x ./deploy_app.sh && ./deploy_app.sh
+               
+
+
