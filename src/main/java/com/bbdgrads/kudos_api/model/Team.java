@@ -15,7 +15,7 @@ public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teamId;
-
-    @Column(nullable = false)
+    // Made team name unique
+    @Column(nullable = false, unique = true)
     private String name;
 }
