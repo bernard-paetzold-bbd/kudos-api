@@ -35,7 +35,7 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("You do not have permission to create teams.");
         }
-        Optional<Team> existingTeam = teamService.findByTeamName(name);
+        Optional<Team> existingTeam = teamService.findByName(name);
         if (existingTeam.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(String.format("A team with the name '%s' already exists.", name));
@@ -87,7 +87,7 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Team not found.");
         }
-        if (teamService.findByTeamName(newName).isPresent()) {
+        if (teamService.findByName(newName).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("A team with this name already exists.");
         }

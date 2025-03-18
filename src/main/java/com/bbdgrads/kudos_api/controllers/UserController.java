@@ -52,7 +52,7 @@ public class UserController {
     @PutMapping("/addUserToTeam")
     public ResponseEntity<String> addUserToTeam(@RequestParam String username, @RequestParam String team_name){
         var userOpt = userService.findByUsername(username);
-        var teamOpt = teamService.findByTeamName(team_name);
+        var teamOpt = teamService.findByName(team_name);
         if (userOpt.isEmpty() || teamOpt.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Either the team does not exist or the user does not exist.");
         }
