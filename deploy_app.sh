@@ -43,7 +43,7 @@ ssh -i "$keyFile" -o "StrictHostKeyChecking accept-new" ec2-user@$ec2PublicIP <<
 EOF
 
 ssh -o "StrictHostKeyChecking accept-new" -i "$keyFile" ec2-user@$ec2PublicIP <<EOF
-    env DB_USERNAME='$dbUser' DB_PASSWORD='$dbPassword' DB_URL='$dbURL' nohup java -jar ~/$jarFileName > ~/app.log 2>&1 &
+    env DB_USERNAME='$dbUser' DB_PASSWORD='$dbPassword' DB_URL='$dbURL' GOOGLE_CLIENT_ID='$GOOGLE_CLIENT_ID' GOOGLE_CLIENT_KEY='$GOOGLE_CLIENT_KEY' KUDOS_API_SECRET='$KUDOS_API_SECRET' nohup java -jar ~/$jarFileName > ~/app.log 2>&1 &
 EOF
 
 echo "Deployment complete."
