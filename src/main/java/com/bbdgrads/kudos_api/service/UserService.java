@@ -1,6 +1,5 @@
 package com.bbdgrads.kudos_api.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.bbdgrads.kudos_api.model.User;

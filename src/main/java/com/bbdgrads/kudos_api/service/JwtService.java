@@ -5,15 +5,24 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import com.bbdgrads.kudos_api.model.User;
 import com.google.auth.oauth2.TokenVerifier;
+
+import jakarta.persistence.EntityNotFoundException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
 import java.util.Optional;
 
 @Service
 public class JwtService {
+
+    @Autowired
+    UserServiceImpl userService;
 
     @Value("${google.client.id}")
     private String CLIENT_ID;
@@ -21,7 +30,7 @@ public class JwtService {
     private String API_SECRET;
     private final String KUDOS_ISSUER = "kudos-api";
 
-    public boolean verifyGoogleJwt(String jwtToken){
+    public boolean verifyGoogleJwt(String jwtToken) {
         try {
             String GOOGLE_ISSUER = "https://accounts.google.com";
             TokenVerifier verifier = TokenVerifier.newBuilder()
@@ -37,7 +46,7 @@ public class JwtService {
             // System.out.println("Email: " + decodedJWT.getClaim("email").asString());
             return true;
 
-        } catch (JWTVerificationException | TokenVerifier.VerificationException e){
+        } catch (JWTVerificationException | TokenVerifier.VerificationException e) {
             System.err.println("JWT Verification failed: " + e.getMessage());
             return false;
         }
@@ -54,8 +63,7 @@ public class JwtService {
         }
     }
 
-
-    public String generateApiJwt(String userId){
+    public String generateApiJwt(String userId) {
         String KUDOS_ISSUER = "kudos-api";
         long EXPIRATION_TIME = 86400000;
         return JWT.create()
@@ -66,20 +74,31 @@ public class JwtService {
                 .sign(Algorithm.HMAC256(API_SECRET));
     }
 
-    public DecodedJWT verifyApiJwt(String apiJwt){
-        try{
+    public DecodedJWT verifyApiJwt(String apiJwt) {
+        try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(API_SECRET))
                     .withIssuer(KUDOS_ISSUER)
                     .build();
-            return  verifier.verify(apiJwt);
-        } catch (JWTVerificationException e){
+            return verifier.verify(apiJwt);
+        } catch (JWTVerificationException e) {
             System.err.println("JWT Verification failed: " + e.getMessage());
             return null;
         }
-
     }
 
-    public Optional<String> verifyApiRequest(String apiJwt){
+    public User getUserFromHeader(String bearer) throws AccessDeniedException, EntityNotFoundException {
+
+        Optional<String> jwtOptional = this.verifyApiRequest(bearer);
+
+        String token = jwtOptional.orElseThrow(
+                () -> new AccessDeniedException(String.format("Invalid token")));
+
+        var user = userService.findByUserGoogleId(token).orElseThrow(
+                () -> new EntityNotFoundException(String.format("User does not exist.")));
+        return user;
+    }
+
+    public Optional<String> verifyApiRequest(String apiJwt) {
         return Optional.ofNullable(verifyApiJwt(apiJwt).getSubject());
     }
 }
