@@ -23,6 +23,7 @@ public class UserController {
 
     // TODO: Need to check the type of the google_id
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createUser(
             @RequestParam String name,
             @RequestParam String googleId) {

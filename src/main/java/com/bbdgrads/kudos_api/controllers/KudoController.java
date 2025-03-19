@@ -24,7 +24,7 @@ public class KudoController {
     private UserServiceImpl userService;
 
     @PostMapping("/create")
-    public ResponseEntity<Kudo> createNewUser(@RequestParam Long user_id, @RequestParam String name) {
+    public ResponseEntity<Kudo> createNewKudo(@RequestParam Long user_id, @RequestParam String name) {
         var newKudo = new Kudo();
 
         Kudo kudo = kudoService.save(newKudo);
@@ -46,7 +46,7 @@ public class KudoController {
     }
 
     //Get all kudos of a user by their username.
-    @GetMapping("/{username}")
+    @GetMapping("/getKudoByUsername/{username}")
     public ResponseEntity<?> getKudosOfUsername(@PathVariable String username){
         Optional<User> user = userService.findByUsername(username);
         if (user.isEmpty()){
@@ -58,10 +58,10 @@ public class KudoController {
 
     // Update the message of a kudo. Can be used in the case where message needs to be censored or corrected after the fact.
     @PatchMapping("/{kudoId}/message")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> updateKudoMessage(
             @PathVariable Long kudoId,
-            @RequestParam String newMessage/*,
+            @RequestBody String newMessage/*,
             @RequestParam String username*/) { // change to google token
 
 //        Optional<User> user = userService.findByUsername(username);
@@ -86,7 +86,7 @@ public class KudoController {
     }
 
     // Get a kudo from its ID.
-    @GetMapping("/{kudoId}")
+    @GetMapping("/getKudoById/{kudoId}")
     public ResponseEntity<?> getKudoById(@PathVariable Long kudoId) {
         Optional<Kudo> kudoOpt = kudoService.findByKudoId(kudoId);
 
@@ -96,6 +96,12 @@ public class KudoController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(kudoOpt.get());
+    }
+
+    @GetMapping("/getAllKudos")
+    public ResponseEntity<List<Kudo>> getAllKudos(){
+        List<Kudo> kudos = kudoService.findAllKudos();
+        return ResponseEntity.status(HttpStatus.OK).body(kudos);
     }
 
 }

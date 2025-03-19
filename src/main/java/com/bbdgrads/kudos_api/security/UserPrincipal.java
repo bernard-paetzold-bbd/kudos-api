@@ -21,7 +21,9 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> user.isAdmin() ? "ROLE_ADMIN" : "ROLE_USER");
+        List<GrantedAuthority> roles = List.of(() -> user.isAdmin() ? "ROLE_ADMIN" : "ROLE_USER");
+        roles.forEach(role -> System.out.println(role.getAuthority()));
+        return roles;
     }
 
     @Override

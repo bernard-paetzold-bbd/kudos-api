@@ -25,8 +25,8 @@ public class TeamController {
     @PostMapping("/create")
     public ResponseEntity<?> createTeam(
             @RequestParam String name,
-            @RequestParam String googleToken) {
-        Optional<User> user = userService.findByUserToken(googleToken);
+            @RequestParam String googleId) {
+        Optional<User> user = userService.findByUserGoogleId(googleId);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid user token.");
@@ -70,9 +70,9 @@ public class TeamController {
     public ResponseEntity<?> updateTeam(
             @PathVariable Long teamId,
             @RequestParam String newName,
-            @RequestParam String googleToken) {
+            @RequestParam String googleId) {
 
-        Optional<User> user = userService.findByUserToken(googleToken);
+        Optional<User> user = userService.findByUserGoogleId(googleId);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid user token.");
@@ -101,8 +101,8 @@ public class TeamController {
 
     // Delete a team
     @DeleteMapping("/{teamId}")
-    public ResponseEntity<String> deleteTeam(@PathVariable Long teamId, @RequestParam String googleToken) {
-        Optional<User> user = userService.findByUserToken(googleToken);
+    public ResponseEntity<String> deleteTeam(@PathVariable Long teamId, @RequestParam String googleId) {
+        Optional<User> user = userService.findByUserGoogleId(googleId);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid user token.");

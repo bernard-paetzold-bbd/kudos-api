@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class JwtService {
@@ -32,8 +33,8 @@ public class JwtService {
 
             DecodedJWT decodedJWT = JWT.decode(jwtToken);
             // Could potentially get user info here
-//            System.out.println("User ID: " + decodedJWT.getSubject());
-//            System.out.println("Email: " + decodedJWT.getClaim("email").asString());
+            // System.out.println("User ID: " + decodedJWT.getSubject());
+            // System.out.println("Email: " + decodedJWT.getClaim("email").asString());
             return true;
 
         } catch (JWTVerificationException | TokenVerifier.VerificationException e){
@@ -76,5 +77,9 @@ public class JwtService {
             return null;
         }
 
+    }
+
+    public Optional<String> verifyApiRequest(String apiJwt){
+        return Optional.ofNullable(verifyApiJwt(apiJwt).getSubject());
     }
 }

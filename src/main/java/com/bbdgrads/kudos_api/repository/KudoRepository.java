@@ -13,4 +13,6 @@ public interface KudoRepository extends JpaRepository<Kudo, Long> {
     List<Kudo> findByTargetUser(User targetUser);
 
     List<Kudo> findBySendingUser(User sendingUser);
+
+    List<Kudo> findAll();
 }

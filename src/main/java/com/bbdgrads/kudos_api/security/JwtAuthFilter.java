@@ -24,13 +24,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private UserServiceImpl userService;
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain fc)
             throws ServletException, IOException
     {
         String token = extractToken(req); // Get the token from the request.
-        if (token != null && jwtService.verifyGoogleJwt(token)){
-            String googleId = jwtService.extractGoogleIdFromJwt(token);
+        var verifyJwt = jwtService.verifyApiRequest(token);
+        if (token != null && jwtService.verifyApiRequest(token).isPresent()){
+            String googleId = verifyJwt.get();
             Optional<User> userOptional = userService.findByUserGoogleId(googleId);
 
             if (userOptional.isPresent()){
@@ -48,7 +50,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private String extractToken(HttpServletRequest req) {
         // TODO: Check that it is in fact bearer and not authorization as the header
 
-        String authHeader = req.getHeader("Bearer"); // Authorization instead of bearer since coming from google.
+        String authHeader = req.getHeader("bearer"); // Authorization instead of bearer since coming from google.
         return authHeader;
     }
 }

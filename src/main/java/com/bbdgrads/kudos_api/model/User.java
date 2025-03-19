@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 public class User {
 
-    public User(String username, String googleToken, boolean isAdmin) {
+    public User(String username, String googleId, boolean isAdmin) {
         this.username = username;
         this.googleId = googleId;
         this.isAdmin = isAdmin;

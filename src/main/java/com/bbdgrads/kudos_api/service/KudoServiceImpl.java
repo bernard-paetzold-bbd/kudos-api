@@ -47,4 +47,7 @@ public class KudoServiceImpl implements KudoService {
         return kudoRepository.findBySendingUser(targetUser);
     }
 
+    public List<Kudo> findAllKudos(){
+        return kudoRepository.findAll();
+    }
 }
