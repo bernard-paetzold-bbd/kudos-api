@@ -81,7 +81,7 @@ public class TeamController {
     }
 
     // Get all the teams
-    @GetMapping
+    @GetMapping("/allTeams")
     public ResponseEntity<List<Team>> getAllTeams() {
         List<Team> teams = teamService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(teams);
