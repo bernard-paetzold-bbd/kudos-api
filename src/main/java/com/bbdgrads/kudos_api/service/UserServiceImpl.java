@@ -33,6 +33,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findByGoogleId(String googleId) {
+        return userRepository.findByGoogleToken(googleId);
+    }
+
+    @Override
     public Optional<User> findByUserId(Long userId) {
         return userRepository.findByUserId(userId);
     }

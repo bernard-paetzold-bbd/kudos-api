@@ -52,7 +52,13 @@ public class OAuthController extends ProtectedController {
                         userInfoResponse.ifPresentOrElse(
                                 oAuthUserInfoResponse ->
                                 {
-                                    userService.save(new User(oAuthUserInfoResponse.getName(), oAuthUserInfoResponse.getSub(), true));
+                                    Optional<User> user = userService.findByGoogleId(oAuthUserInfoResponse.getSub());
+                                    if(user.isEmpty()){
+                                        System.out.println("User Signed Up!");
+                                        userService.save(new User(oAuthUserInfoResponse.getName(), oAuthUserInfoResponse.getSub(),false));
+                                    } else{
+                                        System.out.println("User logged in");
+                                    }
                                     authResponse.apiJwt = jwtService.generateApiJwt(oAuthUserInfoResponse.getSub());
                                     authResponse.authenticated = true;
                                 }
@@ -72,9 +78,10 @@ public class OAuthController extends ProtectedController {
     }
 
     @GetMapping("/test-auth")
-    public String testAuth(@RequestHeader String bearer){
-        System.out.println(bearer);
-        Optional<String> test = this.verifyApiRequest(jwtService, bearer);
+    public String testAuth(@RequestHeader("Authorization") String authorizationHeader){
+        String token = authorizationHeader.replace("Bearer ", "");
+        System.out.println(token);
+        Optional<String> test = this.verifyApiRequest(jwtService, token);
         if (test.isPresent()){
             System.out.println(test.get());
             return "success";
