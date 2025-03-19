@@ -11,4 +11,6 @@ public interface UserService {
     User save(User user);
 
     void delete(long userId);
+
+    Optional<User> findByGoogleId(String googleId);
 }

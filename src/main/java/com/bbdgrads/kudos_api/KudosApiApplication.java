@@ -8,13 +8,12 @@ import com.bbdgrads.kudos_api.repository.KudoRepository;
 import com.bbdgrads.kudos_api.repository.TeamRepository;
 import com.bbdgrads.kudos_api.service.*;
 import jakarta.transaction.Transactional;
+import com.bbdgrads.kudos_api.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import java.util.Optional;
 
 @SpringBootApplication
 public class KudosApiApplication {
@@ -43,35 +42,47 @@ public class KudosApiApplication {
 	@Bean
 	CommandLineRunner initData(UserServiceImpl userService, TeamServiceImpl teamService, KudoServiceImpl kudoService) {
 		return args -> {
-			// Create dummy teams
-			// Team teamA = new Team(null, "Alpha Team");
-			// Team teamB = new Team(null, "Beta Team");
-			// teamService.save(teamA);
-			// teamService.save(teamB);
 
-			// // Create dummy users
-			// User adminUser = new User("AdminUser", "admin_google_ID", true);
-			// User greg = new User("Gregory_Maselle", "111907463772066977914", true);
-			// User normalUser = new User("RegularUser", "user_google_ID", false);
-			// User kyle = new User("Kyle_Wilkins", "104939578726951606234", false);
+			User adminUser = new User("AdminUser", "admin_google_ID", true);
+			User greg = new User("Gregory_Maselle", "111907463772066977914", true);
+			User normalUser = new User("RegularUser", "user_google_ID", false);
+			User kyle = new User("Kyle_Wilkins", "104939578726951606234", false);
 
-			// adminUser.setTeam(teamA);
-			// normalUser.setTeam(teamB);
-			// userService.save(adminUser);
-			// userService.save(normalUser);
-			// userService.save(greg);
-			// userService.save(kyle);
+			userService.save(adminUser);
+			userService.save(normalUser);
+			userService.save(greg);
+			userService.save(kyle);
 
-			// // Create dummy kudos
-			// Kudo kudo = new Kudo("Jolly good show bro! *Fist bump*", normalUser, greg);
-			// Kudo kudo1 = new Kudo("Test 1", greg, kyle);
-			// Kudo kudo2 = new Kudo("Test 2", normalUser, adminUser);
+			// Create and save teams first
+			Team teamA = new Team(null, "Alpha Team");
+			Team teamB = new Team(null, "Beta Team");
+//			Team teamA = new Team();
+//			Team teamB = new Team();
+//			teamA.setName("Alpha");
+//			teamB.setName("Beta");
 
-			// kudoService.save(kudo);
-			// kudoService.save(kudo1);
-			// kudoService.save(kudo2);
+			teamService.save(teamA, greg); // Persist teamA first
+			teamService.save(teamB, greg); // Persist teamB first
 
-			// System.out.println("Dummy data initialized!");
+			adminUser.setTeam(teamA);
+			normalUser.setTeam(teamB);
+			//greg.setTeam(teamA);
+
+			userService.save(adminUser);
+			userService.save(normalUser);
+			userService.save(greg);
+			userService.save(kyle);
+
+			  //Create dummy kudos
+			 Kudo kudo = new Kudo("Jolly good show bro! *Fist bump*", normalUser, greg);
+			 Kudo kudo1 = new Kudo("Test 1", greg, kyle);
+			 Kudo kudo2 = new Kudo("Test 2", normalUser, adminUser);
+
+			 kudoService.save(kudo);
+			 kudoService.save(kudo1);
+			 kudoService.save(kudo2);
+
+			 System.out.println("Dummy data initialized!");
 		};
 	}
 

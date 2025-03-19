@@ -1,6 +1,7 @@
 package com.bbdgrads.kudos_api.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import com.bbdgrads.kudos_api.model.Log;
@@ -77,6 +78,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findByGoogleId(String googleId) {
+        return userRepository.findByGoogleId(googleId);
+    }
+
+    @Override
     public Optional<User> findByUserId(Long userId) {
         return userRepository.findByUserId(userId);
     }
@@ -112,5 +118,14 @@ public class UserServiceImpl implements UserService {
             return true;
         } else
             return false;
+    }
+
+    public List<User> findAllByTeamName(String team_name){
+        return userRepository.findAllByTeamName(team_name);
+    }
+
+    public boolean makeUserAdmin(String username) {
+        int updatedRows = userRepository.updateUserToAdmin(username);
+        return updatedRows > 0; // Return true if at least one row was updated
     }
 }

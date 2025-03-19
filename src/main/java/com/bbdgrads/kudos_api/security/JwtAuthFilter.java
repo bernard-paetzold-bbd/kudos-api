@@ -28,8 +28,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain fc)
             throws ServletException, IOException {
         String token = extractToken(req); // Get the token from the request.
-        var verifyJwt = jwtService.verifyApiRequest(token);
-        if (token != null && jwtService.verifyApiRequest(token).isPresent()) {
+
+        if (token == null || token.isBlank()) {
+            fc.doFilter(req, res);
+            return;
+        }
+
+        Optional<String> verifyJwt = jwtService.verifyApiRequest(token);
+        if (verifyJwt.isPresent()) {
             String googleId = verifyJwt.get();
             Optional<User> userOptional = userService.findByUserGoogleId(googleId);
 
