@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.beans.factory.annotation.Value;
-
 import java.awt.*;
 import java.net.URI;
 import java.util.Map;
@@ -16,6 +15,7 @@ import java.util.Scanner;
 
 @Service
 public class AuthService {
+
     // TODO secure secrets and get new keys
 
     @Value("${google.client.id}")

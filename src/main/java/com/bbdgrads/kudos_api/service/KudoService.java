@@ -10,12 +10,12 @@ public interface KudoService {
     // Return Kudo, so the saver can see the ID provided to it.
     Kudo save(Kudo kudo);
 
-    void delete(long id);
-
     // Changed here
     Optional<Kudo> findByKudoId(Long kudoId);
 
     List<Kudo> findByTargetUser(User targetId);
 
     List<Kudo> findBySendingUser(User targetId);
+
+    void delete(Kudo kudo, User actingUser);
 }

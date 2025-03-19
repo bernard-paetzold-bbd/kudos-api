@@ -23,7 +23,7 @@ public class OAuthController extends ProtectedController {
     private final JwtService jwtService;
     private final UserService userService;
 
-    public  OAuthController(AuthService authService, JwtService jwtService, UserService userService){
+    public OAuthController(AuthService authService, JwtService jwtService, UserService userService){
         this.authService = authService;
         this.jwtService = jwtService;
         this.userService = userService;
@@ -52,7 +52,7 @@ public class OAuthController extends ProtectedController {
                         userInfoResponse.ifPresentOrElse(
                                 oAuthUserInfoResponse ->
                                 {
-                                    userService.save(new User(oAuthUserInfoResponse.getName(), oAuthUserInfoResponse.getSub(), true));
+                                    userService.save(new User(oAuthUserInfoResponse.getName(), oAuthUserInfoResponse.getSub(), false));
                                     authResponse.apiJwt = jwtService.generateApiJwt(oAuthUserInfoResponse.getSub());
                                     authResponse.authenticated = true;
                                 }
