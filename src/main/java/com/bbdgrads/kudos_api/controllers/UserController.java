@@ -1,7 +1,12 @@
 package com.bbdgrads.kudos_api.controllers;
 
+import com.bbdgrads.kudos_api.service.JwtService;
 import com.bbdgrads.kudos_api.service.TeamServiceImpl;
 import com.bbdgrads.kudos_api.service.UserServiceImpl;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,18 +15,28 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import com.bbdgrads.kudos_api.model.User;
+import com.bbdgrads.kudos_api.security.JwtAuthFilter;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/user")
 public class UserController {
+        private final JwtAuthFilter jwtAuthFilter;
+
+        private final JwtService jwtService;
+
         @Autowired
         private UserServiceImpl userService;
         @Autowired
         private TeamServiceImpl teamService;
 
-        // TODO: Need to check the type of the google_id
+        public UserController(JwtAuthFilter jwtAuthFilter, JwtService jwtService) {
+                this.jwtAuthFilter = jwtAuthFilter;
+                this.jwtService = jwtService;
+        }
+
         @PostMapping("/create")
         @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<?> createUser(
@@ -33,10 +48,8 @@ public class UserController {
                 if (existingUserToken.isPresent()) {
                         return ResponseEntity.status(HttpStatus.CONFLICT)
                                         .body(String.format("A user with the ID %s already exists.", googleId));
-                } else if (existingUserUsername.isPresent()) {
-                        return ResponseEntity.status(HttpStatus.CONFLICT)
-                                        .body(String.format("A user with the username %s already exists.", name));
                 }
+
                 User newUser = new User(name, googleId, false);
                 User savedUser = userService.save(newUser);
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
@@ -68,18 +81,26 @@ public class UserController {
         }
 
         // For when a user wants to delete themselves.
-        @DeleteMapping("/{user_google_id}")
-        public ResponseEntity<String> deleteUser(@PathVariable String userGoogleId) {
-                // TODO: Validate the user id token here and map to correct user_id
+        @DeleteMapping("/delete")
+        public ResponseEntity<String> deleteUser(HttpServletRequest req) {
+                User actingUser;
+                try {
+                        actingUser = jwtService.getUserFromHeader(jwtAuthFilter.extractToken(req));
+                } catch (AccessDeniedException ex) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                } catch (EntityNotFoundException ex) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
 
-                var user = userService.findByUserGoogleId(userGoogleId);
+                var user = userService.findByUserGoogleId(actingUser.getGoogleId());
                 if (user.isPresent()) {
                         userService.delete(user.get().getUserId());
                         return ResponseEntity.status(HttpStatus.OK)
                                         .body(String.format("User %s has been deleted.", user.get().getUsername()));
                 }
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                .body(String.format("User with google ID %s does not exist.", userGoogleId));
+                                .body(String.format("User with google ID %s does not exist.",
+                                                actingUser.getGoogleId()));
         }
 
         // ADMIN permissions deletion of a user. Can only be performed by admin, admin

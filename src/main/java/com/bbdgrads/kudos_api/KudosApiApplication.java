@@ -50,9 +50,9 @@ public class KudosApiApplication {
 
 			// // Create dummy users
 			// User adminUser = new User("AdminUser", "admin_google_ID", true);
-			// User greg = new User("Gregory_Maselle","111907463772066977914",true);
+			// User greg = new User("Gregory_Maselle", "111907463772066977914", true);
 			// User normalUser = new User("RegularUser", "user_google_ID", false);
-			// User kyle = new User("Kyle_Wilkins","104939578726951606234",false);
+			// User kyle = new User("Kyle_Wilkins", "104939578726951606234", false);
 
 			// adminUser.setTeam(teamA);
 			// normalUser.setTeam(teamB);
