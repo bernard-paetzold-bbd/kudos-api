@@ -8,8 +8,9 @@ sudo apt install terraform
 echo "Running Terraform..."
 
 cd terraform
-
+echo "Running Terraform init..."
 terraform init -reconfigure
+echo "Done Running Terraform init..."
 
 privateKey=$(terraform output -raw private_key)
 
