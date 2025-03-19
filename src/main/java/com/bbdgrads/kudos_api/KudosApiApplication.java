@@ -12,8 +12,8 @@ import java.util.Optional;
 @SpringBootApplication
 public class KudosApiApplication {
 
-	@Autowired
-	private AuthService authService;
+	// @Autowired
+	// private AuthService authService;
 
 	public static void main(String[] args) {
 		System.out.println("\n\n" +
