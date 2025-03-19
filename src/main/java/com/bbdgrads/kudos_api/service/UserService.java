@@ -1,6 +1,5 @@
 package com.bbdgrads.kudos_api.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.bbdgrads.kudos_api.model.User;
@@ -12,4 +11,6 @@ public interface UserService {
     User save(User user);
 
     void delete(long userId);
+
+    Optional<User> findByGoogleId(String googleId);
 }

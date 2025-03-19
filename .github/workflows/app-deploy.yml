@@ -2,17 +2,18 @@ name: App Deploy
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "src/**"
+
+#  push:
+#    branches:
+#      - main
+#    paths:
+#      - 'src/**'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      TF_VAR_db_username: ${{ vars.DB_USERNAME }}
+      TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
       TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_KEY: ${{ secrets.GOOGLE_CLIENT_KEY }}

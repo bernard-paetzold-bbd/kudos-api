@@ -16,7 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Optional since we are looking for a single object to be returned;
     public Optional<User> findByUserId(Long userId);
 
-    public Optional<User> findByGoogleToken(String googleToken);
+    // TODO: Check this works method works.
+    public Optional<User> findByGoogleId(String googleToken);
 
     public Optional<User> findByUsername(String username);
 
@@ -24,5 +25,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Query("UPDATE User u SET u.team = :team WHERE u.id = :userId")
     int updateUserTeam(@Param("userId") Long userId, @Param("team") Team team);
+
+    @Query("SELECT u FROM User u WHERE u.team.name = :teamName")
+    List<User> findAllByTeamName(@Param("teamName") String teamName);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE User u SET u.isAdmin = true WHERE u.username = :username")
+    int updateUserToAdmin(@Param("username") String username);
+
+
 
 }

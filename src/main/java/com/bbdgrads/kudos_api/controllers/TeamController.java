@@ -2,31 +2,44 @@ package com.bbdgrads.kudos_api.controllers;
 
 import com.bbdgrads.kudos_api.model.Team;
 import com.bbdgrads.kudos_api.model.User;
+import com.bbdgrads.kudos_api.security.JwtAuthFilter;
+import com.bbdgrads.kudos_api.service.JwtService;
 import com.bbdgrads.kudos_api.service.TeamServiceImpl;
 import com.bbdgrads.kudos_api.service.UserServiceImpl;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/teams")
 public class TeamController {
+    private final JwtAuthFilter jwtAuthFilter;
+    private final JwtService jwtService;
 
     @Autowired
     private TeamServiceImpl teamService;
     @Autowired
     private UserServiceImpl userService;
 
+    TeamController(JwtService jwtService, JwtAuthFilter jwtAuthFilter) {
+        this.jwtService = jwtService;
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
+
     // Create a new team
     @PostMapping("/create")
     public ResponseEntity<?> createTeam(
             @RequestParam String name,
-            @RequestParam String googleToken) {
-        Optional<User> user = userService.findByUserToken(googleToken);
+            @RequestParam String googleId, HttpServletRequest req) {
+        Optional<User> user = userService.findByUserGoogleId(googleId);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid user token.");
@@ -41,11 +54,20 @@ public class TeamController {
                     .body(String.format("A team with the name '%s' already exists.", name));
         }
         Team newTeam = new Team(null, name);
-        Team savedTeam = teamService.save(newTeam);
+
+        User actingUser;
+        try {
+            actingUser = jwtService.getUserFromHeader(jwtAuthFilter.extractToken(req));
+        } catch (AccessDeniedException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        Team savedTeam = teamService.save(newTeam, actingUser);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTeam);
     }
-
 
     // Get a team's name by their ID.
     @GetMapping("/{teamId}")
@@ -59,7 +81,7 @@ public class TeamController {
     }
 
     // Get all the teams
-    @GetMapping
+    @GetMapping("/allTeams")
     public ResponseEntity<List<Team>> getAllTeams() {
         List<Team> teams = teamService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(teams);
@@ -70,9 +92,10 @@ public class TeamController {
     public ResponseEntity<?> updateTeam(
             @PathVariable Long teamId,
             @RequestParam String newName,
-            @RequestParam String googleToken) {
+            @RequestParam String googleId,
+            HttpServletRequest req) {
 
-        Optional<User> user = userService.findByUserToken(googleToken);
+        Optional<User> user = userService.findByUserGoogleId(googleId);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid user token.");
@@ -91,18 +114,28 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("A team with this name already exists.");
         }
+
+        User actingUser;
+        try {
+            actingUser = jwtService.getUserFromHeader(jwtAuthFilter.extractToken(req));
+        } catch (AccessDeniedException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
         Team team = teamOpt.get();
         team.setName(newName);
-        teamService.save(team);
+        teamService.save(team, actingUser);
 
         return ResponseEntity.status(HttpStatus.OK).body(team);
     }
 
-
     // Delete a team
     @DeleteMapping("/{teamId}")
-    public ResponseEntity<String> deleteTeam(@PathVariable Long teamId, @RequestParam String googleToken) {
-        Optional<User> user = userService.findByUserToken(googleToken);
+    public ResponseEntity<String> deleteTeam(@PathVariable Long teamId, @RequestParam String googleId,
+            HttpServletRequest req) {
+        Optional<User> user = userService.findByUserGoogleId(googleId);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid user token.");
@@ -116,7 +149,17 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Team not found.");
         }
-        teamService.delete(teamId);
+
+        User actingUser;
+        try {
+            actingUser = jwtService.getUserFromHeader(jwtAuthFilter.extractToken(req));
+        } catch (AccessDeniedException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        teamService.delete(teamId, actingUser);
         return ResponseEntity.ok(String.format("Team '%s' has been deleted.", team.get().getName()));
     }
 
