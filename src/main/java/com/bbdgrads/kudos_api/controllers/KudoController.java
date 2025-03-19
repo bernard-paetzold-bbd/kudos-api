@@ -113,7 +113,7 @@ public class KudoController extends ProtectedController {
             HttpServletRequest req
     /*
      * ,
-     *
+     * 
      * @RequestParam String username
      */) { // change to google token
 
