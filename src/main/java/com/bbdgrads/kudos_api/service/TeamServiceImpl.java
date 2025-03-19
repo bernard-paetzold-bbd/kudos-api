@@ -23,13 +23,14 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Team save(Team team, User actingUser) {
+        teamRepository.save(team);
         var log = new Log();
         log.setActingUser(actingUser);
         log.setTeam(team);
         log.setEventId(5);
         logService.save(log);
 
-        return teamRepository.save(team);
+        return team;
     }
 
     @Override

@@ -18,6 +18,7 @@ import com.bbdgrads.kudos_api.model.User;
 import com.bbdgrads.kudos_api.security.JwtAuthFilter;
 
 import java.nio.file.AccessDeniedException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -63,9 +64,9 @@ public class UserController {
                 return new String();
         }
 
-        @PutMapping("/addUserToTeam")
+        @PatchMapping("/addUserToTeam/{username}/{team_name}")
         @PreAuthorize("hasRole('ADMIN')")
-        public ResponseEntity<String> addUserToTeam(@RequestParam String username, @RequestParam String team_name) {
+        public ResponseEntity<String> addUserToTeam(@PathVariable String username, @PathVariable String team_name) {
                 var userOpt = userService.findByUsername(username);
                 var teamOpt = teamService.findByName(team_name);
                 if (userOpt.isEmpty() || teamOpt.isEmpty()) {
@@ -125,5 +126,39 @@ public class UserController {
                 }
                 userService.delete(userToDelete.get().getUserId());
                 return ResponseEntity.status(HttpStatus.OK).body(String.format("User %s has been deleted.", username));
+        }
+
+        @GetMapping("/getTeam/{username}")
+        public ResponseEntity<String> getTeam(@PathVariable String username){
+                Optional<User> userOpt = userService.findByUsername(username);
+                if (userOpt.isPresent()){
+                        return ResponseEntity.status(HttpStatus.OK).body(userOpt.get().getTeam().getName());
+                }
+                else{
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+
+        }
+
+        @GetMapping("/findAllByTeamName/{team_name}")
+        public ResponseEntity<List<User>> getAllUsersInTeam(@PathVariable String team_name){
+                List<User> users = userService.findAllByTeamName(team_name);
+
+                return ResponseEntity.status(HttpStatus.OK).body(users);
+
+        }
+
+        @PatchMapping("/setUserToAdmin/{username}")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<String> updateToAdmin(@PathVariable String username){
+                System.out.println(username);
+                boolean updated = userService.makeUserAdmin(username);
+
+                if (updated){
+                        return ResponseEntity.ok("Success!");
+                }
+                else{
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
         }
 }
