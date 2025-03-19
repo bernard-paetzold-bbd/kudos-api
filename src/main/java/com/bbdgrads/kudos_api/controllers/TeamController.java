@@ -46,7 +46,6 @@ public class TeamController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTeam);
     }
 
-
     // Get a team's name by their ID.
     @GetMapping("/{teamId}")
     public ResponseEntity<?> getTeamById(@PathVariable Long teamId) {
@@ -97,7 +96,6 @@ public class TeamController {
 
         return ResponseEntity.status(HttpStatus.OK).body(team);
     }
-
 
     // Delete a team
     @DeleteMapping("/{teamId}")
