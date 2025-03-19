@@ -5,6 +5,8 @@ sudo apt-add-repository --yes "deb [arch=$(dpkg --print-architecture)] https://a
 sudo apt update
 sudo apt install terraform
 
+echo "Running Terraform..."
+
 cd terraform
 
 terraform init
