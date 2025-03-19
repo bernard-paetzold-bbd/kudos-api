@@ -32,7 +32,7 @@ public class Log {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = true)
-    private User team;
+    private Team team;
 
     @Column(nullable = true)
     private int eventId;

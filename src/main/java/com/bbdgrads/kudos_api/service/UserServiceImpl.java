@@ -9,6 +9,8 @@ import com.bbdgrads.kudos_api.model.Team;
 import com.bbdgrads.kudos_api.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.bbdgrads.kudos_api.model.User;
@@ -18,6 +20,7 @@ import com.bbdgrads.kudos_api.repository.UserRepository;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private TeamRepository teamRepository;
 
@@ -26,6 +29,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) {
+        user.setUsername(user.getUsername().replace(' ', '_'));
+
+        Optional<User> existingUserUsername = userRepository.findByUsername(user.getUsername());
+        int count = 1;
+        String proposedUsername = user.getUsername();
+
+        while (existingUserUsername.isPresent()) {
+            proposedUsername = user.getUsername().concat(String.format("_%d", count));
+            existingUserUsername = userRepository.findByUsername(proposedUsername);
+            count += 1;
+        }
+
+        user.setUsername(proposedUsername);
+
         var resultUser = userRepository.save(user);
 
         var log = new Log();
@@ -84,13 +101,12 @@ public class UserServiceImpl implements UserService {
 
         if (updatedRows > 0) {
             userOptional.ifPresent(user -> {
-                var updateUserTeamLog = new Log();
+                var log = new Log();
 
-                updateUserTeamLog.setActingUser(user);
-                updateUserTeamLog.setTargetUser(user);
-                updateUserTeamLog.setEventId(2);
-
-                logService.save(updateUserTeamLog);
+                log.setActingUser(user);
+                log.setTargetUser(user);
+                log.setEventId(2);
+                logService.save(log);
             });
 
             return true;
