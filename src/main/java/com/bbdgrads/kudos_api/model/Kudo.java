@@ -31,8 +31,10 @@ public class Kudo {
     @Column(nullable = false, updatable = false)
     private LocalDateTime created_at;
 
+    @Column(nullable = true)
     private Boolean flagged;
 
+    @Column(nullable = true)
     private Boolean read;
 
     @PrePersist
@@ -40,4 +42,11 @@ public class Kudo {
         this.created_at = LocalDateTime.now();
     }
 
+    public Kudo(String message, User sendingUser, User targetUser) {
+        this.message = message;
+        this.sendingUser = sendingUser;
+        this.targetUser = targetUser;
+        this.flagged = false;
+        this.read = false;
+    }
 }

@@ -23,7 +23,7 @@ public class OAuthController extends ProtectedController {
     private final JwtService jwtService;
     private final UserService userService;
 
-    public  OAuthController(AuthService authService, JwtService jwtService, UserService userService){
+    public OAuthController(AuthService authService, JwtService jwtService, UserService userService){
         this.authService = authService;
         this.jwtService = jwtService;
         this.userService = userService;
