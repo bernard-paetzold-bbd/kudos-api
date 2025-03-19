@@ -9,7 +9,7 @@ echo "Running Terraform..."
 
 cd terraform
 
-terraform init -migrate-state
+terraform init -reconfigure
 
 privateKey=$(terraform output -raw private_key)
 
