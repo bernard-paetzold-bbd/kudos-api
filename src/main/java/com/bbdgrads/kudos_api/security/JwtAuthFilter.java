@@ -24,33 +24,33 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private UserServiceImpl userService;
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain fc)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         String token = extractToken(req); // Get the token from the request.
         var verifyJwt = jwtService.verifyApiRequest(token);
-        if (token != null && jwtService.verifyApiRequest(token).isPresent()){
+        if (token != null && jwtService.verifyApiRequest(token).isPresent()) {
             String googleId = verifyJwt.get();
             Optional<User> userOptional = userService.findByUserGoogleId(googleId);
 
-            if (userOptional.isPresent()){
+            if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 UserPrincipal principal = new UserPrincipal(user); // Create a UserPrincipal class
                 JwtAuthentication authentication = new JwtAuthentication(principal); // Create an Authentication object
-                SecurityContextHolder.getContext().setAuthentication(authentication); // Sets the authentication context, saying "this guy is authorized!"
+                SecurityContextHolder.getContext().setAuthentication(authentication); // Sets the authentication
+                                                                                      // context, saying "this guy is
+                                                                                      // authorized!"
             }
         }
         fc.doFilter(req, res);
 
-
     }
 
-    private String extractToken(HttpServletRequest req) {
-        // TODO: Check that it is in fact bearer and not authorization as the header
-
-        String authHeader = req.getHeader("bearer"); // Authorization instead of bearer since coming from google.
-        return authHeader;
+    public String extractToken(HttpServletRequest req) {
+        String authHeader = req.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
     }
 }

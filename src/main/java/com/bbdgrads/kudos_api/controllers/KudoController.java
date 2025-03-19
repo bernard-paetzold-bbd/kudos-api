@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.management.InvalidAttributeValueException;
-
+import com.bbdgrads.kudos_api.security.JwtAuthFilter;
 import com.bbdgrads.kudos_api.service.AuthService;
 import com.bbdgrads.kudos_api.service.JwtService;
 import com.bbdgrads.kudos_api.service.KudoServiceImpl;
 import com.bbdgrads.kudos_api.service.UserServiceImpl;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,8 @@ import com.bbdgrads.kudos_api.model.User;
 @RequestMapping(path = "/kudos")
 public class KudoController extends ProtectedController {
 
+    private final JwtAuthFilter jwtAuthFilter;
+
     private final JwtService jwtService;
 
     private final OAuthController OAuthController;
@@ -37,18 +40,19 @@ public class KudoController extends ProtectedController {
     @Autowired
     private UserServiceImpl userService;
 
-    KudoController(OAuthController OAuthController, JwtService jwtService) {
+    KudoController(OAuthController OAuthController, JwtService jwtService, JwtAuthFilter jwtAuthFilter) {
         this.OAuthController = OAuthController;
         this.jwtService = jwtService;
+        this.jwtAuthFilter = jwtAuthFilter;
     }
 
     @PostMapping("/create")
     public ResponseEntity<Kudo> createNewKudo(@RequestParam Long targetUserId,
-            @RequestParam String message, @RequestHeader String bearer) {
+            @RequestParam String message, HttpServletRequest req) {
 
         User sendingUser;
         try {
-            sendingUser = jwtService.getUserFromHeader(bearer);
+            sendingUser = jwtService.getUserFromHeader(jwtAuthFilter.extractToken(req));
         } catch (AccessDeniedException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (EntityNotFoundException ex) {
