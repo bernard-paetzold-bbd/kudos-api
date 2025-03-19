@@ -32,7 +32,7 @@ public class TeamServiceImpl implements TeamService{
         return teamRepository.findById(teamId);
     }
 
-    public Optional<Team> findByTeamName(String team_name) {
+    public Optional<Team> findByName(String team_name) {
         return teamRepository.findByName(team_name);
     }
 

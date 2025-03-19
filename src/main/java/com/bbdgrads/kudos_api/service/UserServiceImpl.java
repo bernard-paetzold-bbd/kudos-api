@@ -37,8 +37,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUserId(userId);
     }
 
-    public Optional<User> findByUserToken(String userTokenId) {
-        return userRepository.findByGoogleToken(userTokenId);
+    public Optional<User> findByUserGoogleId(String googleId) {
+        return userRepository.findByGoogleId(googleId);
     }
 
     public Optional<User> findByUsername(String username) {

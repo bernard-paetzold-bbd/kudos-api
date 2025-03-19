@@ -25,8 +25,8 @@ public class TeamController {
     @PostMapping("/create")
     public ResponseEntity<?> createTeam(
             @RequestParam String name,
-            @RequestParam String googleToken) {
-        Optional<User> user = userService.findByUserToken(googleToken);
+            @RequestParam String googleId) {
+        Optional<User> user = userService.findByUserGoogleId(googleId);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid user token.");
@@ -35,7 +35,7 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("You do not have permission to create teams.");
         }
-        Optional<Team> existingTeam = teamService.findByTeamName(name);
+        Optional<Team> existingTeam = teamService.findByName(name);
         if (existingTeam.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(String.format("A team with the name '%s' already exists.", name));
@@ -70,9 +70,9 @@ public class TeamController {
     public ResponseEntity<?> updateTeam(
             @PathVariable Long teamId,
             @RequestParam String newName,
-            @RequestParam String googleToken) {
+            @RequestParam String googleId) {
 
-        Optional<User> user = userService.findByUserToken(googleToken);
+        Optional<User> user = userService.findByUserGoogleId(googleId);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid user token.");
@@ -87,7 +87,7 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Team not found.");
         }
-        if (teamService.findByTeamName(newName).isPresent()) {
+        if (teamService.findByName(newName).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("A team with this name already exists.");
         }
@@ -101,8 +101,8 @@ public class TeamController {
 
     // Delete a team
     @DeleteMapping("/{teamId}")
-    public ResponseEntity<String> deleteTeam(@PathVariable Long teamId, @RequestParam String googleToken) {
-        Optional<User> user = userService.findByUserToken(googleToken);
+    public ResponseEntity<String> deleteTeam(@PathVariable Long teamId, @RequestParam String googleId) {
+        Optional<User> user = userService.findByUserGoogleId(googleId);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid user token.");

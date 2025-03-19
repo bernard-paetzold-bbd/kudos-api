@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class JwtService {
@@ -32,8 +33,8 @@ public class JwtService {
 
             DecodedJWT decodedJWT = JWT.decode(jwtToken);
             // Could potentially get user info here
-//            System.out.println("User ID: " + decodedJWT.getSubject());
-//            System.out.println("Email: " + decodedJWT.getClaim("email").asString());
+            // System.out.println("User ID: " + decodedJWT.getSubject());
+            // System.out.println("Email: " + decodedJWT.getClaim("email").asString());
             return true;
 
         } catch (JWTVerificationException | TokenVerifier.VerificationException e){
@@ -41,6 +42,18 @@ public class JwtService {
             return false;
         }
     }
+
+    // Get the google Id from the JWT
+    public String extractGoogleIdFromJwt(String jwtToken) {
+        try {
+            DecodedJWT decodedJWT = JWT.decode(jwtToken);
+            return decodedJWT.getSubject(); // sub = subject ~= google Id
+        } catch (JWTVerificationException e) {
+            System.err.println("JWT Decoding failed: " + e.getMessage());
+            return null;
+        }
+    }
+
 
     public String generateApiJwt(String userId){
         String KUDOS_ISSUER = "kudos-api";
@@ -64,5 +77,9 @@ public class JwtService {
             return null;
         }
 
+    }
+
+    public Optional<String> verifyApiRequest(String apiJwt){
+        return Optional.ofNullable(verifyApiJwt(apiJwt).getSubject());
     }
 }

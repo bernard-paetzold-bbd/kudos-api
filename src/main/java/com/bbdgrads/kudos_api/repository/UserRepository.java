@@ -16,7 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Optional since we are looking for a single object to be returned;
     public Optional<User> findByUserId(Long userId);
 
-    public Optional<User> findByGoogleToken(String googleToken);
+    // TODO: Check this works method works.
+    public Optional<User> findByGoogleId(String googleToken);
 
     public Optional<User> findByUsername(String username);
 
