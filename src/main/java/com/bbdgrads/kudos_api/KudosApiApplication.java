@@ -43,16 +43,18 @@ public class KudosApiApplication {
 	CommandLineRunner initData(UserServiceImpl userService, TeamServiceImpl teamService, KudoServiceImpl kudoService) {
 		return args -> {
 			// Create dummy teams
-			// Team teamA = new Team(null, "Alpha Team");
-			// Team teamB = new Team(null, "Beta Team");
-			// teamService.save(teamA);
-			// teamService.save(teamB);
+//			 Team teamA = new Team(null, "Alpha Team");
+//			 Team teamB = new Team(null, "Beta Team");
+//			 User greg = new User("greg1", "111907463772066977914", true);
+//			 teamService.save(teamA, greg);
+
+
 
 			// // Create dummy users
 			// User adminUser = new User("AdminUser", "admin_google_ID", true);
-			// User greg = new User("Gregory_Maselle","111907463772066977914",true);
+			// User greg = new User("Gregory_Maselle", "111907463772066977914", true);
 			// User normalUser = new User("RegularUser", "user_google_ID", false);
-			// User kyle = new User("Kyle_Wilkins","104939578726951606234",false);
+			// User kyle = new User("Kyle_Wilkins", "104939578726951606234", false);
 
 			// adminUser.setTeam(teamA);
 			// normalUser.setTeam(teamB);

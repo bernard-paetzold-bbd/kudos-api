@@ -1,7 +1,12 @@
 package com.bbdgrads.kudos_api.controllers;
 
+import com.bbdgrads.kudos_api.service.JwtService;
 import com.bbdgrads.kudos_api.service.TeamServiceImpl;
 import com.bbdgrads.kudos_api.service.UserServiceImpl;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,18 +15,29 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import com.bbdgrads.kudos_api.model.User;
+import com.bbdgrads.kudos_api.security.JwtAuthFilter;
 
+import java.nio.file.AccessDeniedException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/user")
 public class UserController {
+        private final JwtAuthFilter jwtAuthFilter;
+
+        private final JwtService jwtService;
+
         @Autowired
         private UserServiceImpl userService;
         @Autowired
         private TeamServiceImpl teamService;
 
-        // TODO: Need to check the type of the google_id
+        public UserController(JwtAuthFilter jwtAuthFilter, JwtService jwtService) {
+                this.jwtAuthFilter = jwtAuthFilter;
+                this.jwtService = jwtService;
+        }
+
         @PostMapping("/create")
         @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<?> createUser(
@@ -33,10 +49,8 @@ public class UserController {
                 if (existingUserToken.isPresent()) {
                         return ResponseEntity.status(HttpStatus.CONFLICT)
                                         .body(String.format("A user with the ID %s already exists.", googleId));
-                } else if (existingUserUsername.isPresent()) {
-                        return ResponseEntity.status(HttpStatus.CONFLICT)
-                                        .body(String.format("A user with the username %s already exists.", name));
                 }
+
                 User newUser = new User(name, googleId, false);
                 User savedUser = userService.save(newUser);
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
@@ -50,9 +64,9 @@ public class UserController {
                 return new String();
         }
 
-        @PutMapping("/addUserToTeam")
+        @PatchMapping("/addUserToTeam/{username}/{team_name}")
         @PreAuthorize("hasRole('ADMIN')")
-        public ResponseEntity<String> addUserToTeam(@RequestParam String username, @RequestParam String team_name) {
+        public ResponseEntity<String> addUserToTeam(@PathVariable String username, @PathVariable String team_name) {
                 var userOpt = userService.findByUsername(username);
                 var teamOpt = teamService.findByName(team_name);
                 if (userOpt.isEmpty() || teamOpt.isEmpty()) {
@@ -68,18 +82,26 @@ public class UserController {
         }
 
         // For when a user wants to delete themselves.
-        @DeleteMapping("/{user_google_id}")
-        public ResponseEntity<String> deleteUser(@PathVariable String userGoogleId) {
-                // TODO: Validate the user id token here and map to correct user_id
+        @DeleteMapping("/delete")
+        public ResponseEntity<String> deleteUser(HttpServletRequest req) {
+                User actingUser;
+                try {
+                        actingUser = jwtService.getUserFromHeader(jwtAuthFilter.extractToken(req));
+                } catch (AccessDeniedException ex) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                } catch (EntityNotFoundException ex) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
 
-                var user = userService.findByUserGoogleId(userGoogleId);
+                var user = userService.findByUserGoogleId(actingUser.getGoogleId());
                 if (user.isPresent()) {
                         userService.delete(user.get().getUserId());
                         return ResponseEntity.status(HttpStatus.OK)
                                         .body(String.format("User %s has been deleted.", user.get().getUsername()));
                 }
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                .body(String.format("User with google ID %s does not exist.", userGoogleId));
+                                .body(String.format("User with google ID %s does not exist.",
+                                                actingUser.getGoogleId()));
         }
 
         // ADMIN permissions deletion of a user. Can only be performed by admin, admin
@@ -104,5 +126,39 @@ public class UserController {
                 }
                 userService.delete(userToDelete.get().getUserId());
                 return ResponseEntity.status(HttpStatus.OK).body(String.format("User %s has been deleted.", username));
+        }
+
+        @GetMapping("/getTeam/{username}")
+        public ResponseEntity<String> getTeam(@PathVariable String username){
+                Optional<User> userOpt = userService.findByUsername(username);
+                if (userOpt.isPresent()){
+                        return ResponseEntity.status(HttpStatus.OK).body(userOpt.get().getTeam().getName());
+                }
+                else{
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+
+        }
+
+        @GetMapping("/findAllByTeamName/{team_name}")
+        public ResponseEntity<List<User>> getAllUsersInTeam(@PathVariable String team_name){
+                List<User> users = userService.findAllByTeamName(team_name);
+
+                return ResponseEntity.status(HttpStatus.OK).body(users);
+
+        }
+
+        @PatchMapping("/setUserToAdmin/{username}")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<String> updateToAdmin(@PathVariable String username){
+                System.out.println(username);
+                boolean updated = userService.makeUserAdmin(username);
+
+                if (updated){
+                        return ResponseEntity.ok("Success!");
+                }
+                else{
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
         }
 }

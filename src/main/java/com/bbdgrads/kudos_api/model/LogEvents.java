@@ -1,11 +1,10 @@
 package com.bbdgrads.kudos_api.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 public class LogEvents {
-
-    public static final Map<Integer, String> events = new HashMap<>();
+    public static final BiMap<Integer, String> events = HashBiMap.create();
 
     static {
         events.put(0, "CreateUser");
@@ -15,5 +14,8 @@ public class LogEvents {
         events.put(4, "DeletedKudo");
         events.put(5, "CreatedTeam");
         events.put(6, "DeletedTeam");
+        events.put(7, "ReadKudo");
+        events.put(8, "FlaggedKudo");
+        events.put(9, "UpdatedKudoMessage");
     }
 }

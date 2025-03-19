@@ -38,11 +38,11 @@ public class OAuthController extends ProtectedController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<Map<String, String>> getUserAuthCode(@RequestBody OAuthCodeRequest oAuthCodeRequest){
+    public ResponseEntity<Map<String, Object>> getUserAuthCode(@RequestBody OAuthCodeRequest oAuthCodeRequest){
         String authCode = oAuthCodeRequest.getAuthCode();
         Optional<OAuthAccessTokenResponse> accessTokenResponse = authService.getUserAccessToken(authCode);
 
-        var authResponse = new Object(){boolean authenticated = false; String apiJwt = "";String errorMsg = "";};
+        var authResponse = new Object(){boolean authenticated = false; String apiJwt = "";String errorMsg = ""; User loggedInUser = null;};
 
         accessTokenResponse.ifPresentOrElse(
                 oAuthAccessTokenResponse -> {
@@ -55,12 +55,14 @@ public class OAuthController extends ProtectedController {
                                     Optional<User> user = userService.findByGoogleId(oAuthUserInfoResponse.getSub());
                                     if(user.isEmpty()){
                                         System.out.println("User Signed Up!");
-                                        userService.save(new User(oAuthUserInfoResponse.getName(), oAuthUserInfoResponse.getSub(),false));
+                                        authResponse.loggedInUser = userService.save(new User(oAuthUserInfoResponse.getName(), oAuthUserInfoResponse.getSub(),false));
                                     } else{
                                         System.out.println("User logged in");
+                                        authResponse.loggedInUser = user.get();
                                     }
                                     authResponse.apiJwt = jwtService.generateApiJwt(oAuthUserInfoResponse.getSub());
                                     authResponse.authenticated = true;
+
                                 }
 
                         , () -> authResponse.errorMsg = "Could not not fetch user info!");
@@ -71,7 +73,7 @@ public class OAuthController extends ProtectedController {
         , () -> authResponse.errorMsg = "Auth code could not exchanged for access token!");
 
         if(authResponse.authenticated){
-            return ResponseEntity.ok(Map.of("API-KEY", authResponse.apiJwt));
+            return ResponseEntity.ok(Map.of("API-KEY", authResponse.apiJwt, "user", authResponse.loggedInUser));
         } else{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("Error", authResponse.errorMsg));
         }

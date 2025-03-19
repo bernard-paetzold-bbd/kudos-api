@@ -99,6 +99,7 @@ public class JwtService {
     }
 
     public Optional<String> verifyApiRequest(String apiJwt) {
-        return Optional.ofNullable(verifyApiJwt(apiJwt).getSubject());
+        DecodedJWT decodedJWT = verifyApiJwt(apiJwt);
+        return (decodedJWT != null) ? Optional.ofNullable(decodedJWT.getSubject()) : Optional.empty();
     }
 }

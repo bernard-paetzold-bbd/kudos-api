@@ -1,6 +1,8 @@
 package com.bbdgrads.kudos_api.service;
 
+import com.bbdgrads.kudos_api.model.Log;
 import com.bbdgrads.kudos_api.model.Team;
+import com.bbdgrads.kudos_api.model.User;
 import com.bbdgrads.kudos_api.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +18,33 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private TeamRepository teamRepository;
 
+    @Autowired
+    private LogServiceImpl logService;
+
     @Override
-    public Team save(Team team) {
-        return teamRepository.save(team);
+    public Team save(Team team, User actingUser) {
+        teamRepository.save(team);
+        var log = new Log();
+        log.setActingUser(actingUser);
+        log.setTeam(team);
+        log.setEventId(5);
+        logService.save(log);
+
+        return team;
     }
 
     @Override
-    public void delete(long teamId) {
+    public void delete(long teamId, User actingUser) {
         Team tempTeam = teamRepository.findById(teamId)
                 .orElseThrow(
                         () -> new EntityNotFoundException(String.format("Team with id %s does not exist.", teamId)));
+
+        var log = new Log();
+        log.setActingUser(actingUser);
+        log.setTeam(tempTeam);
+        log.setEventId(6);
+        logService.save(log);
+
         teamRepository.delete(tempTeam);
     }
 

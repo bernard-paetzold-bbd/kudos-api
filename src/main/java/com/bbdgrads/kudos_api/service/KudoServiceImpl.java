@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -34,15 +36,14 @@ public class KudoServiceImpl implements KudoService {
         var createdKudo = kudoRepository.save(kudo);
 
         var log = new Log();
-        // TODO: Replace with user context user
         log.setActingUser(kudo.getSendingUser());
         log.setTargetUser(kudo.getTargetUser());
         log.setKudo(kudo);
         log.setEventId(3);
         log.setVerboseLog(
-                String.format("%s -- %s --> %s - \"%s\" to %s", kudo.getSendingUser().getUsername(),
+                String.format("%s -- %s --> \"%s\" to %s", kudo.getSendingUser().getUsername(),
                         LogEvents.events.get(3),
-                        kudo.getKudoId(), kudo.getMessage().substring(0, Math.min(kudo.getMessage().length(), 50)),
+                        kudo.getMessage().substring(0, Math.min(kudo.getMessage().length(), 50)),
                         kudo.getTargetUser().getUsername()));
         logService.save(log);
 
@@ -52,23 +53,19 @@ public class KudoServiceImpl implements KudoService {
     // Made change here to use optional and account for when kudo does not exist
     // with ID.
     @Override
-    public void delete(long kudoId) {
-        Kudo tempKudo = findByKudoId(kudoId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("The kudo with kudoId %s does not exist", kudoId)));
+    public void delete(Kudo kudo, User actingUser) {
 
-        kudoRepository.deleteById(kudoId);
+        kudoRepository.delete(kudo);
 
-        // TODO: Replace with user context user
         var log = new Log();
-        log.setActingUser(new User());
-        log.setKudo(tempKudo);
+        log.setActingUser(actingUser);
+        log.setKudo(kudo);
         log.setEventId(6);
         log.setVerboseLog(
-                String.format("%s -- %s --> (%s) - %s", tempKudo.getSendingUser().getUsername(),
+                String.format("%s -- %s --> (%s) - %s", kudo.getSendingUser().getUsername(),
                         LogEvents.events.get(4),
-                        tempKudo.getKudoId(),
-                        tempKudo.getMessage().substring(0, Math.min(tempKudo.getMessage().length(), 50))));
+                        kudo.getKudoId(),
+                        kudo.getMessage().substring(0, Math.min(kudo.getMessage().length(), 50))));
         logService.save(log);
     }
 
@@ -90,5 +87,53 @@ public class KudoServiceImpl implements KudoService {
 
     public List<Kudo> findAllKudos() {
         return kudoRepository.findAll();
+    }
+
+    public void setRead(Kudo kudo, boolean read, User actingUser) {
+        kudo.setRead(read);
+        kudoRepository.save(kudo);
+
+        var log = new Log();
+        log.setActingUser(actingUser);
+        log.setKudo(kudo);
+        log.setEventId(7);
+        log.setVerboseLog(
+                String.format("%s -- %s --> (%s) - %s to %b", kudo.getSendingUser().getUsername(),
+                        LogEvents.events.get(8),
+                        kudo.getKudoId(),
+                        kudo.getMessage().substring(0, Math.min(kudo.getMessage().length(), 50)), read));
+        logService.save(log);
+    }
+
+    public void setFlagged(Kudo kudo, boolean flagged, User actingUser) {
+        kudo.setFlagged(flagged);
+        kudoRepository.save(kudo);
+
+        var log = new Log();
+        log.setActingUser(actingUser);
+        log.setKudo(kudo);
+        log.setEventId(8);
+        log.setVerboseLog(
+                String.format("%s -- %s --> (%s) - %s to %b", kudo.getSendingUser().getUsername(),
+                        LogEvents.events.get(8),
+                        kudo.getKudoId(),
+                        kudo.getMessage().substring(0, Math.min(kudo.getMessage().length(), 50)), flagged));
+        logService.save(log);
+    }
+
+    public void setMessage(Kudo kudo, String message, User actingUser) {
+        kudo.setMessage(message);
+        kudoRepository.save(kudo);
+
+        var log = new Log();
+        log.setActingUser(actingUser);
+        log.setKudo(kudo);
+        log.setEventId(9);
+        log.setVerboseLog(
+                String.format("%s -- %s --> (%s) - %s", kudo.getSendingUser().getUsername(),
+                        LogEvents.events.get(4),
+                        kudo.getKudoId(),
+                        kudo.getMessage().substring(0, Math.min(kudo.getMessage().length(), 50))));
+        logService.save(log);
     }
 }
