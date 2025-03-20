@@ -18,9 +18,6 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class KudosApiApplication {
 
-	// @Autowired
-	// private AuthService authService;
-
 	@Autowired
 	private KudoRepository kudoRepository;
 
@@ -39,44 +36,43 @@ public class KudosApiApplication {
 		SpringApplication.run(KudosApiApplication.class, args);
 	}
 
-// 	@Bean
-// 	CommandLineRunner initData(UserServiceImpl userService, TeamServiceImpl teamService, KudoServiceImpl kudoService) {
-// 		return args -> {
-// 			// Create dummy teams
-// //			 Team teamA = new Team(null, "Alpha Team");
-// //			 Team teamB = new Team(null, "Beta Team");
-// //			 User greg = new User("greg1", "111907463772066977914", true);
-// //			 teamService.save(teamA, greg);
+	// @Bean
+	// CommandLineRunner initData(UserServiceImpl userService, TeamServiceImpl
+	// teamService, KudoServiceImpl kudoService) {
+	// return args -> {
+	// // Create dummy teams
+	// Team teamA = new Team(null, "Alpha Team");
+	// Team teamB = new Team(null, "Beta Team");
+	// User greg = new User("greg1", "111907463772066977914", true);
+	// teamService.save(teamA, greg);
 
+	// // Create dummy users
+	// User adminUser = new User("AdminUser", "admin_google_ID", true);
+	// User greg = new User("Gregory_Maselle", "111907463772066977914", true);
+	// User normalUser = new User("RegularUser", "user_google_ID", false);
+	// User kyle = new User("Kyle_Wilkins", "104939578726951606234", false);
 
+	// adminUser.setTeam(teamA);
+	// normalUser.setTeam(teamB);
+	// userService.save(adminUser);
+	// userService.save(normalUser);
+	// userService.save(greg);
+	// userService.save(kyle);
 
-// 	// 		// // Create dummy users
-// 	// 		// User adminUser = new User("AdminUser", "admin_google_ID", true);
-// 	// 		// User greg = new User("Gregory_Maselle", "111907463772066977914", true);
-// 	// 		// User normalUser = new User("RegularUser", "user_google_ID", false);
-// 	// 		// User kyle = new User("Kyle_Wilkins", "104939578726951606234", false);
+	// // Create dummy kudos
+	// Kudo kudo = new Kudo("Jolly good show bro! *Fist bump*", normalUser, greg);
+	// Kudo kudo1 = new Kudo("Test 1", greg, kyle);
+	// Kudo kudo2 = new Kudo("Test 2", normalUser, adminUser);
 
-// 	// 		// adminUser.setTeam(teamA);
-// 	// 		// normalUser.setTeam(teamB);
-// 	// 		// userService.save(adminUser);
-// 	// 		// userService.save(normalUser);
-// 	// 		// userService.save(greg);
-// 	// 		// userService.save(kyle);
+	// kudoService.save(kudo);
+	// kudoService.save(kudo1);
+	// kudoService.save(kudo2);
 
-// 	// 		// // Create dummy kudos
-// 	// 		// Kudo kudo = new Kudo("Jolly good show bro! *Fist bump*", normalUser, greg);
-// 	// 		// Kudo kudo1 = new Kudo("Test 1", greg, kyle);
-// 	// 		// Kudo kudo2 = new Kudo("Test 2", normalUser, adminUser);
-
-// 	// 		// kudoService.save(kudo);
-// 	// 		// kudoService.save(kudo1);
-// 	// 		// kudoService.save(kudo2);
-
-// 	// 		// System.out.println("Dummy data initialized!");
-// 	// 	};
-// 	// }
-// 		};
-// 	}
+	// System.out.println("Dummy data initialized!");
+	// };
+	// }
+	// };
+	// }
 
 	// -- Used for testing auth service, this class must also implement
 	// CommandLineRunner if testing
