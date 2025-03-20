@@ -19,7 +19,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.bbdgrads.kudos_api.model.Log;
 import com.bbdgrads.kudos_api.model.Team;
+import com.bbdgrads.kudos_api.model.User;
 import com.bbdgrads.kudos_api.repository.TeamRepository;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -28,15 +30,24 @@ public class TeamServiceTest {
     @Mock
     private TeamRepository teamRepository;
 
+    @Mock
+    private LogServiceImpl logService;
+
     @InjectMocks
     private TeamServiceImpl teamService;
 
     private Team team;
 
+    private User user;
+
     @Before
     public void setUp() {
         team = new Team();
         team.setName("team-zkl");
+
+        user = new User();
+        user.setUsername("john doe");
+        user.setGoogleId("johnGoogle1234");
     }
 
     @After
@@ -62,8 +73,9 @@ public class TeamServiceTest {
     public void testSaveTeam() {
 
         when(teamRepository.save(any(Team.class))).thenReturn(team);
+        doNothing().when(logService).save(any(Log.class));
 
-        teamService.save(team);
+        teamService.save(team, user);
 
         verify(teamRepository, times(1)).save(team);
     }
@@ -73,8 +85,9 @@ public class TeamServiceTest {
 
         when(teamRepository.findById(any(Long.class))).thenReturn(Optional.of(team));
         doNothing().when(teamRepository).delete(any(Team.class));
+        doNothing().when(logService).save(any(Log.class));
 
-        teamService.delete(1L);
+        teamService.delete(1L, user);
 
         verify(teamRepository, times(1)).delete(team);
     }

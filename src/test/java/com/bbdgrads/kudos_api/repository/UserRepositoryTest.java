@@ -58,7 +58,7 @@ public class UserRepositoryTest {
         assertTrue(foundUser.isPresent());
 
         assertEquals(user.getUsername(), foundUser.get().getUsername());
-        assertEquals(user.getGoogleToken(), foundUser.get().getGoogleToken());
+        assertEquals(user.getGoogleId(), foundUser.get().getGoogleId());
         assertEquals(user.isAdmin(), foundUser.get().isAdmin());
     }
 
@@ -69,7 +69,7 @@ public class UserRepositoryTest {
         assertTrue(foundUser.isPresent());
 
         assertEquals(testUser.getUsername(), foundUser.get().getUsername());
-        assertEquals(testUser.getGoogleToken(), foundUser.get().getGoogleToken());
+        assertEquals(testUser.getGoogleId(), foundUser.get().getGoogleId());
         assertEquals(testUser.isAdmin(), foundUser.get().isAdmin());
     }
 
@@ -78,33 +78,33 @@ public class UserRepositoryTest {
         var foundUser = userRepository.findByUserId(testUser.getUserId());
         assertTrue(foundUser.isPresent());
         assertEquals(testUser.getUsername(), foundUser.get().getUsername());
-        assertEquals(testUser.getGoogleToken(), foundUser.get().getGoogleToken());
+        assertEquals(testUser.getGoogleId(), foundUser.get().getGoogleId());
         assertEquals(testUser.isAdmin(), foundUser.get().isAdmin());
     }
 
     @Test
     public void testFindByGoogleToken() {
-        var foundUser = userRepository.findByGoogleToken("invalid_token");
+        var foundUser = userRepository.findByGoogleId("invalid_token");
         assertFalse(foundUser.isPresent());
 
-        foundUser = userRepository.findByGoogleToken(testUser.getGoogleToken());
+        foundUser = userRepository.findByGoogleId(testUser.getGoogleId());
         assertTrue(foundUser.isPresent());
 
         assertEquals(testUser.getUsername(), foundUser.get().getUsername());
-        assertEquals(testUser.getGoogleToken(), foundUser.get().getGoogleToken());
+        assertEquals(testUser.getGoogleId(), foundUser.get().getGoogleId());
         assertEquals(testUser.isAdmin(), foundUser.get().isAdmin());
     }
 
     @Test
     public void testFindByUsername() {
-        var foundUser = userRepository.findByGoogleToken("invalid_user_name");
+        var foundUser = userRepository.findByGoogleId("invalid_user_name");
         assertFalse(foundUser.isPresent());
 
         foundUser = userRepository.findByUsername(testUser.getUsername());
         assertTrue(foundUser.isPresent());
 
         assertEquals(testUser.getUsername(), foundUser.get().getUsername());
-        assertEquals(testUser.getGoogleToken(), foundUser.get().getGoogleToken());
+        assertEquals(testUser.getGoogleId(), foundUser.get().getGoogleId());
         assertEquals(testUser.isAdmin(), foundUser.get().isAdmin());
     }
 

@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.bbdgrads.kudos_api.model.Log;
 import com.bbdgrads.kudos_api.model.User;
 import com.bbdgrads.kudos_api.repository.UserRepository;
 
@@ -27,6 +28,9 @@ public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private LogService logService;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -37,7 +41,7 @@ public class UserServiceTest {
     public void setUp() {
         user = new User();
         user.setUsername("john doe");
-        user.setGoogleToken("johnGoogle1234");
+        user.setGoogleId("johnGoogle1234");
     }
 
     @After
@@ -63,6 +67,7 @@ public class UserServiceTest {
     public void testSaveUser() {
 
         when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
         userService.save(user);
 
@@ -73,6 +78,7 @@ public class UserServiceTest {
     public void testDeleteUser() {
 
         when(userRepository.findByUserId(any(Long.class))).thenReturn(Optional.of(user));
+        doNothing().when(logService).save(any(Log.class));
         doNothing().when(userRepository).delete(any(User.class));
 
         userService.delete(1L);
