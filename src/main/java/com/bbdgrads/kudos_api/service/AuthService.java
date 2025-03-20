@@ -72,7 +72,7 @@ public class AuthService {
                 "&access_type=offline" +
                 "&prompt=consent";
 
-        if (Desktop.isDesktopSupported()) {
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             Desktop.getDesktop().browse(new URI(AUTH_URL));
         } else {
             System.out.println("Open this URL to login...");

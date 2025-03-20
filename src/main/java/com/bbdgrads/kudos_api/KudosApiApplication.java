@@ -8,13 +8,12 @@ import com.bbdgrads.kudos_api.repository.KudoRepository;
 import com.bbdgrads.kudos_api.repository.TeamRepository;
 import com.bbdgrads.kudos_api.service.*;
 import jakarta.transaction.Transactional;
+import com.bbdgrads.kudos_api.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import java.util.Optional;
 
 @SpringBootApplication
 public class KudosApiApplication {
@@ -40,14 +39,16 @@ public class KudosApiApplication {
 		SpringApplication.run(KudosApiApplication.class, args);
 	}
 
-	// @Bean
-	// CommandLineRunner initData(UserServiceImpl userService, TeamServiceImpl teamService, KudoServiceImpl kudoService) {
-	// 	return args -> {
-	// 		// Create dummy teams
-	// 		// Team teamA = new Team(null, "Alpha Team");
-	// 		// Team teamB = new Team(null, "Beta Team");
-	// 		// teamService.save(teamA);
-	// 		// teamService.save(teamB);
+	@Bean
+	CommandLineRunner initData(UserServiceImpl userService, TeamServiceImpl teamService, KudoServiceImpl kudoService) {
+		return args -> {
+			// Create dummy teams
+//			 Team teamA = new Team(null, "Alpha Team");
+//			 Team teamB = new Team(null, "Beta Team");
+//			 User greg = new User("greg1", "111907463772066977914", true);
+//			 teamService.save(teamA, greg);
+
+
 
 	// 		// // Create dummy users
 	// 		// User adminUser = new User("AdminUser", "admin_google_ID", true);

@@ -38,7 +38,7 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public void save(Log log) {
-        log.setVerboseLog((String.format("%s: ", LocalDateTime.now().toString())).concat(log.getVerboseLog()));
+        log.setVerboseLog((String.format("%s: ", LocalDateTime.now().toString())).concat(log.getVerboseLog() == null ? "" :log.getVerboseLog()));
         logRepository.save(log);
     }
 

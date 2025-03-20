@@ -45,20 +45,20 @@ public class LogController {
 
         var user = userService.findByUserId(userId);
 
-        if (!user.isPresent()) {
+        if (user.isPresent()) {
             userLogs = logService.findByActingUser(user.get());
         }
         return ResponseEntity.status(HttpStatus.OK).body(convertLogsToDto(userLogs));
     }
 
     // Get all logs relating to a specific target user
-    @GetMapping("/target-user/{userId}")
-    public ResponseEntity<List<LogDto>> getLogsByTargetUser(@PathVariable Long userId) {
+    @GetMapping("/target-user/{userName}")
+    public ResponseEntity<List<LogDto>> getLogsByTargetUser(@PathVariable String userName) {
         List<Log> userLogs = Collections.emptyList();
 
-        var user = userService.findByUserId(userId);
+        var user = userService.findByUsername(userName);
 
-        if (!user.isPresent()) {
+        if (user.isPresent()) {
             userLogs = logService.findByTargetUser(user.get());
         }
         return ResponseEntity.status(HttpStatus.OK).body(convertLogsToDto(userLogs));

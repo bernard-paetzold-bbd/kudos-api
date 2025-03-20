@@ -248,8 +248,8 @@ public class KudoController extends ProtectedController {
                 .map(kudo -> new KudoDto(
                         kudo.getKudoId(),
                         kudo.getMessage() != null ? kudo.getMessage() : null,
-                        kudo.getSendingUser() != null ? kudo.getSendingUser().getUserId() : null,
-                        kudo.getTargetUser() != null ? kudo.getTargetUser().getUserId() : null,
+                        kudo.getSendingUser() != null ? kudo.getSendingUser().getUsername() : null,
+                        kudo.getTargetUser() != null ? kudo.getTargetUser().getUsername() : null,
                         kudo.getCreated_at() != null ? kudo.getCreated_at() : null,
                         kudo.getFlagged() != null ? kudo.getFlagged() : null,
                         kudo.getRead() != null ? kudo.getRead() : null))
@@ -260,8 +260,8 @@ public class KudoController extends ProtectedController {
         return new KudoDto(
                 kudo.getKudoId(),
                 kudo.getMessage() != null ? kudo.getMessage() : null,
-                kudo.getSendingUser() != null ? kudo.getSendingUser().getUserId() : null,
-                kudo.getTargetUser() != null ? kudo.getTargetUser().getUserId() : null,
+                kudo.getSendingUser() != null ? kudo.getSendingUser().getUsername() : null,
+                kudo.getTargetUser() != null ? kudo.getTargetUser().getUsername() : null,
                 kudo.getCreated_at() != null ? kudo.getCreated_at() : null,
                 kudo.getFlagged() != null ? kudo.getFlagged() : null,
                 kudo.getRead() != null ? kudo.getRead() : null);
@@ -273,8 +273,8 @@ public class KudoController extends ProtectedController {
     private class KudoDto {
         private Long kudoId;
         private String message;
-        private Long sendingUserId;
-        private Long targetUserId;
+        private String sendingUsername;
+        private String targetUsername;
         private LocalDateTime created_at;
         private Boolean flagged;
         private Boolean read;
