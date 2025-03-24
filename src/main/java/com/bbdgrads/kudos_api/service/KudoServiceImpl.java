@@ -19,33 +19,33 @@ import com.bbdgrads.kudos_api.repository.KudoRepository;
 @Service
 public class KudoServiceImpl implements KudoService {
 
-    private final LogServiceImpl logServiceImpl;
+    // private final LogServiceImpl logServiceImpl;
     @Autowired
     private KudoRepository kudoRepository;
 
     @Autowired
     private LogService logService;
 
-    KudoServiceImpl(LogServiceImpl logServiceImpl) {
-        this.logServiceImpl = logServiceImpl;
-    }
+    // KudoServiceImpl(LogServiceImpl logServiceImpl) {
+    //     this.logServiceImpl = logServiceImpl;
+    // }
 
     // Change made here to return saved kudo.
     @Override
     public Kudo save(Kudo kudo) {
         var createdKudo = kudoRepository.save(kudo);
 
-        var log = new Log();
-        log.setActingUser(kudo.getSendingUser());
-        log.setTargetUser(kudo.getTargetUser());
-        log.setKudo(kudo);
-        log.setEventId(3);
-        log.setVerboseLog(
-                String.format("%s -- %s --> \"%s\" to %s", kudo.getSendingUser().getUsername(),
-                        LogEvents.events.get(3),
-                        kudo.getMessage().substring(0, Math.min(kudo.getMessage().length(), 50)),
-                        kudo.getTargetUser().getUsername()));
-        logService.save(log);
+        // var log = new Log();
+        // log.setActingUser(kudo.getSendingUser());
+        // log.setTargetUser(kudo.getTargetUser());
+        // log.setKudo(kudo);
+        // log.setEventId(3);
+        // log.setVerboseLog(
+        //         String.format("%s -- %s --> \"%s\" to %s", kudo.getSendingUser().getUsername(),
+        //                 LogEvents.events.get(3),
+        //                 kudo.getMessage().substring(0, Math.min(kudo.getMessage().length(), 50)),
+        //                 kudo.getTargetUser().getUsername()));
+        // logService.save(log);
 
         return createdKudo;
     }

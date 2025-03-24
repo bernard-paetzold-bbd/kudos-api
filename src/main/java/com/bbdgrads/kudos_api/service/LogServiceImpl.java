@@ -17,17 +17,24 @@ import com.bbdgrads.kudos_api.repository.LogRepository;
 @Service
 public class LogServiceImpl implements LogService {
 
-    private final OpenAPI customOpenAPI;
+    // private final OpenAPI customOpenAPI;
 
-    private final AuthService authService;
+    // private final AuthService authService;
 
     @Autowired
     private LogRepository logRepository;
 
-    LogServiceImpl(AuthService authService, OpenAPI customOpenAPI) {
-        this.authService = authService;
-        this.customOpenAPI = customOpenAPI;
-    }
+    // LogServiceImpl(AuthService authService, OpenAPI customOpenAPI) {
+    //     this.authService = authService;
+    //     this.customOpenAPI = customOpenAPI;
+    // }
+
+    // public LogServiceImpl() {
+    //     this.authService = null;
+    //     this.customOpenAPI = null;
+    // }
+
+    
 
     @Override
     public void save(Log log) {

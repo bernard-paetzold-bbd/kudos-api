@@ -76,7 +76,6 @@ public class JwtService {
 
     public DecodedJWT verifyApiJwt(String apiJwt) {
         try {
-            System.out.println("THIS IS BEING CALLED!!!!!");
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(API_SECRET))
                     .withIssuer(KUDOS_ISSUER)
                     .build();
@@ -101,7 +100,6 @@ public class JwtService {
 
     public Optional<String> verifyApiRequest(String apiJwt) {
         DecodedJWT decodedJWT = verifyApiJwt(apiJwt);
-        //return Optional.ofNullable(verifyApiJwt(apiJwt).getSubject());
         return (decodedJWT != null) ? Optional.ofNullable(decodedJWT.getSubject()) : Optional.empty();
     }
 }

@@ -62,6 +62,7 @@ public class OAuthController extends ProtectedController {
                                     }
                                     authResponse.apiJwt = jwtService.generateApiJwt(oAuthUserInfoResponse.getSub());
                                     authResponse.authenticated = true;
+
                                 }
 
                         , () -> authResponse.errorMsg = "Could not not fetch user info!");
