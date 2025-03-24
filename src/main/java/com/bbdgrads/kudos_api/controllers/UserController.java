@@ -67,7 +67,9 @@ public class UserController {
         @PatchMapping("/addUserToTeam/{username}/{team_name}")
         @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<String> addUserToTeam(@PathVariable String username, @PathVariable String team_name) {
+                try {
                 var userOpt = userService.findByUsername(username);
+
                 var teamOpt = teamService.findByName(team_name);
                 if (userOpt.isEmpty() || teamOpt.isEmpty()) {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -77,6 +79,10 @@ public class UserController {
                 if (!success) {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                         .body("Either the team does not exist or the user does not exist.");
+                }
+                }
+                catch (NullPointerException e) {
+                        throw new NullPointerException("Either this.userService is null or this.teamService is null");
                 }
                 return ResponseEntity.ok("User's team updated successfully.");
         }
