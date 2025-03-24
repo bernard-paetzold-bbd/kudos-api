@@ -9,6 +9,7 @@ import com.bbdgrads.kudos_api.service.UserServiceImpl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,12 +73,16 @@ public class TeamController {
     // Get a team's name by their ID.
     @GetMapping("/{teamId}")
     public ResponseEntity<?> getTeamById(@PathVariable Long teamId) {
-        Optional<Team> team = teamService.findByTeamId(teamId);
-        if (team.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Team not found.");
+        try {
+            Optional<Team> team = teamService.findByTeamId(teamId);
+            if (team.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Team not found.");
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(team.get());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("this.teamService is null.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(team.get());
     }
 
     // Get all the teams
